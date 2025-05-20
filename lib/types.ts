@@ -6,7 +6,7 @@ export interface Car {
   price: number
   mileage: number
   color: string
-  vin: string
+  vin?: string
   transmission: string
   fuelType: string
   bodyStyle: string
@@ -15,13 +15,13 @@ export interface Car {
   featured: boolean
   features: string[]
   specifications: {
-    engine: {
+    engine?: {
       type: string
       displacement: string
       horsepower: number
       torque: number
     }
-    dimensions: {
+    dimensions?: {
       length: number
       width: number
       height: number
@@ -33,14 +33,14 @@ export interface Car {
       fuelEconomyCity: number
       fuelEconomyHighway: number
     }
-    capacity: {
+    capacity?: {
       seating: number
       cargoVolume: number
       fuelTank: number
       towingCapacity: number
     }
   }
-  history: {
+  history?: {
     owners: number
     title: string
     accidents: number

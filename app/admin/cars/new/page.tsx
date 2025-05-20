@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ImagePlus, X } from "lucide-react"
+import type { Car } from "@/lib/types"
 
 export default function NewCarPage() {
   const router = useRouter()
@@ -22,12 +23,85 @@ export default function NewCarPage() {
     e.preventDefault()
     setLoading(true)
 
-    // In a real app, you would submit the form data to your API
-    // For demo purposes, we'll just simulate a delay
-    setTimeout(() => {
+    try {
+      // Collect all form data
+      const formData: Omit<Car, '_id'> = {
+        // Basic Info
+        make: (document.getElementById('make') as HTMLInputElement).value,
+        model: (document.getElementById('model') as HTMLInputElement).value,
+        year: parseInt((document.getElementById('year') as HTMLInputElement).value),
+        price: parseInt((document.getElementById('price') as HTMLInputElement).value),
+        mileage: parseInt((document.getElementById('mileage') as HTMLInputElement).value),
+        color: (document.getElementById('color') as HTMLInputElement).value,
+        vin: (document.getElementById('vin') as HTMLInputElement).value,
+        description: (document.getElementById('description') as HTMLTextAreaElement).value,
+        featured: (document.getElementById('featured') as HTMLInputElement).checked,
+        
+        // Details
+        bodyStyle: (document.getElementById('bodyStyle') as HTMLSelectElement).value,
+        transmission: (document.getElementById('transmission') as HTMLSelectElement).value,
+        fuelType: (document.getElementById('fuelType') as HTMLSelectElement).value,
+        
+        // Images
+        images: images,
+        
+        // Features - collect all checked features into an array
+        features: [
+          ...(document.getElementById('feature-bluetooth') as HTMLInputElement).checked ? ['Bluetooth'] : [],
+          ...(document.getElementById('feature-navigation') as HTMLInputElement).checked ? ['Navigation System'] : [],
+          ...(document.getElementById('feature-leather') as HTMLInputElement).checked ? ['Leather Seats'] : [],
+          ...(document.getElementById('feature-sunroof') as HTMLInputElement).checked ? ['Sunroof/Moonroof'] : [],
+          ...(document.getElementById('feature-heated') as HTMLInputElement).checked ? ['Heated Seats'] : [],
+          ...(document.getElementById('feature-backup') as HTMLInputElement).checked ? ['Backup Camera'] : [],
+          ...(document.getElementById('feature-parking') as HTMLInputElement).checked ? ['Parking Sensors'] : [],
+          ...(document.getElementById('feature-blindspot') as HTMLInputElement).checked ? ['Blind Spot Monitoring'] : [],
+          ...(document.getElementById('feature-apple') as HTMLInputElement).checked ? ['Apple CarPlay'] : [],
+          ...(document.getElementById('feature-android') as HTMLInputElement).checked ? ['Android Auto'] : [],
+          ...(document.getElementById('feature-cruise') as HTMLInputElement).checked ? ['Adaptive Cruise Control'] : [],
+          ...(document.getElementById('feature-lane') as HTMLInputElement).checked ? ['Lane Departure Warning'] : [],
+          ...(document.getElementById('feature-collision') as HTMLInputElement).checked ? ['Collision Warning'] : [],
+          ...(document.getElementById('feature-keyless') as HTMLInputElement).checked ? ['Keyless Entry'] : [],
+          ...(document.getElementById('feature-start') as HTMLInputElement).checked ? ['Remote Start'] : [],
+        ],
+        
+        // Specifications
+        specifications: {
+          engine: {
+            type: (document.getElementById('engineType') as HTMLInputElement).value,
+            displacement: '', // Not in form
+            horsepower: parseInt((document.getElementById('horsepower') as HTMLInputElement).value || '0'),
+            torque: 0, // Not in form
+          },
+          performance: {
+            zeroToSixty: 0, // Not in form
+            topSpeed: 0, // Not in form
+            fuelEconomyCity: 0, // Not in form
+            fuelEconomyHighway: 0, // Not in form
+          }
+        }
+      }
+
+      // Send data to backend
+      const response = await fetch('http://localhost:3002/api/cars', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to save car')
+      }
+
+      // Redirect to admin page on success
+      router.push('/admin')
+    } catch (error) {
+      console.error('Error saving car:', error)
+      // You might want to show an error message to the user here
+    } finally {
       setLoading(false)
-      router.push("/admin")
-    }, 1000)
+    }
   }
 
   const handleImageUpload = () => {
