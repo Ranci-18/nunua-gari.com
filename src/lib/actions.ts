@@ -7,14 +7,20 @@ import { redirect } from 'next/navigation';
 import { carSchema, contactSchema } from './schema';
 import type { CarFormData, ContactFormData } from './schema';
 import { addCar, updateCar, deleteCar, getCarById, addContactMessage, markContactMessageReadStatus, deleteContactMessage } from './data';
-import type { Car } from '@/types';
+import type { Car, ContactFormDataForDb } from '@/types';
 
 
 export async function handleContactForm(prevState: any, formData: FormData) {
   const rawFormData = Object.fromEntries(formData.entries());
+
+  // Log the raw form data received by the server action
+  console.log("Contact Form - Raw Data Received:", JSON.stringify(rawFormData, null, 2));
+
   const validatedFields = contactSchema.safeParse(rawFormData);
 
   if (!validatedFields.success) {
+    // Log the detailed Zod validation errors
+    console.error("Contact Form Validation Errors:", JSON.stringify(validatedFields.error.flatten().fieldErrors, null, 2));
     return {
       errors: validatedFields.error.flatten().fieldErrors,
       message: 'Validation failed. Please check your input.',
@@ -23,14 +29,24 @@ export async function handleContactForm(prevState: any, formData: FormData) {
   }
 
   try {
-    // Instead of sending an email, we save to DB
-    await addContactMessage(validatedFields.data);
-    // No revalidation needed for public pages on contact form submission
-    return { message: 'Thank you for your message! We have received it.', success: true, errors: {} };
+    // The data is valid, proceed to save it
+    const dataForDb: ContactFormDataForDb = {
+      name: validatedFields.data.name,
+      phone: validatedFields.data.phone, // Phone is required by schema
+      preferredContactMethod: validatedFields.data.preferredContactMethod,
+      message: validatedFields.data.message,
+    };
+    if (validatedFields.data.email) { // Add email only if it exists
+      dataForDb.email = validatedFields.data.email;
+    }
+
+    await addContactMessage(dataForDb);
+    revalidatePath('/admin/messages'); // Revalidate admin messages page
+    return { message: 'Thank you for your message! We have received it and will get back to you soon.', success: true, errors: {} };
 
   } catch (error) {
     console.error('Contact form submission error:', error);
-    return { message: 'An unexpected error occurred. Please try again.', success: false, errors: {} };
+    return { message: 'An unexpected error occurred while saving your message. Please try again.', success: false, errors: {} };
   }
 }
 
@@ -78,11 +94,12 @@ export async function createCarAction(prevState: any, formData: FormData) {
     images: imagesFromForm,
     features: featuresFromForm,
   };
+  console.log("Create Car - Processed Form Data for Validation:", JSON.stringify(processedFormData, null, 2));
 
   const validatedFields = carSchema.safeParse(processedFormData);
 
   if (!validatedFields.success) {
-    console.log("Validation Errors (Create):", validatedFields.error.flatten().fieldErrors);
+    console.error("Create Car - Validation Errors:", JSON.stringify(validatedFields.error.flatten().fieldErrors, null, 2));
     return {
       errors: validatedFields.error.flatten().fieldErrors,
       message: 'Validation failed. Please check the car details.',
@@ -128,11 +145,13 @@ export async function updateCarAction(id: string, prevState: any, formData: Form
     images: imagesFromForm,
     features: featuresFromForm,
   };
+  console.log("Update Car - Processed Form Data for Validation:", JSON.stringify(processedFormData, null, 2));
+
 
   const validatedFields = carSchema.safeParse(processedFormData);
 
   if (!validatedFields.success) {
-     console.log("Validation Errors (Update):", validatedFields.error.flatten().fieldErrors);
+     console.error("Update Car - Validation Errors:", JSON.stringify(validatedFields.error.flatten().fieldErrors, null, 2));
     return {
       errors: validatedFields.error.flatten().fieldErrors,
       message: 'Validation failed. Please check the car details.',
