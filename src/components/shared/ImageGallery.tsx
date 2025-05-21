@@ -1,8 +1,8 @@
 
 'use client';
 
-import Image from 'next/image'; // Now used for both main and thumbnails
-import { useState } from 'react';
+import Image from 'next/image';
+import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 
 interface ImageGalleryProps {
@@ -11,62 +11,78 @@ interface ImageGalleryProps {
 }
 
 export function ImageGallery({ images, altTextPrefix }: ImageGalleryProps) {
-  const effectiveImages = images && images.length > 0 ? images : ['https://placehold.co/1066x799.png?text=Placeholder'];
-  const [selectedImage, setSelectedImage] = useState(effectiveImages[0]);
+  const mainPlaceholder = 'https://placehold.co/1066x799.png?text=No+Image+Available';
+  const thumbPlaceholder = 'https://placehold.co/200x150.png?text=Thumb';
 
-  if (!effectiveImages || effectiveImages.length === 0) {
-    // This case should ideally not be reached due to effectiveImages defaulting
-    return (
-      <div className="w-full bg-muted flex items-center justify-center aspect-video rounded-lg">
-        <p className="text-muted-foreground">No images available</p>
-      </div>
-    );
-  }
+  const effectiveImages = images && images.length > 0 ? images : [mainPlaceholder];
+  const [selectedImageForDisplay, setSelectedImageForDisplay] = useState(effectiveImages[0]);
+  
+  // State for the src of the main image to handle errors
+  const [mainImageSrc, setMainImageSrc] = useState(selectedImageForDisplay);
+
+  useEffect(() => {
+    const currentSelected = images && images.length > 0 && images.includes(selectedImageForDisplay) 
+                            ? selectedImageForDisplay 
+                            : (images && images.length > 0 ? images[0] : mainPlaceholder);
+    setSelectedImageForDisplay(currentSelected);
+    setMainImageSrc(currentSelected);
+  }, [images, selectedImageForDisplay]); // Re-evaluate if images or selectedImageForDisplay changes
+
+  const handleMainImageError = () => {
+    setMainImageSrc(mainPlaceholder + '&text=Error+Loading');
+  };
+
+  // For thumbnails, we'll let next/image show its default broken state or rely on alt text,
+  // as managing individual error states for many thumbs is more complex.
+  // Alternatively, one could map to an array of objects with src and error state.
 
   return (
-    <div className="grid gap-4">
+    <div className="grid gap-6">
       {/* Main Image Display */}
-      <div className="relative w-full bg-muted/10 rounded-lg overflow-hidden shadow-md">
-        {/* 
-          Using 1066x799 as base dimensions for aspect ratio. 
-          The className 'w-full h-auto' makes it responsive.
-          'object-contain' ensures the entire image is visible.
-        */}
+      <div className="relative w-full bg-muted/10 rounded-lg overflow-hidden shadow-md max-h-[75vh] flex justify-center items-center">
         <Image
-          key={selectedImage} // Add key to force re-render on image change if necessary
-          src={selectedImage}
+          key={mainImageSrc} // Key helps React re-render if src changes significantly (e.g. to placeholder)
+          src={mainImageSrc}
           alt={`${altTextPrefix} - Main View`}
-          width={1066} // Intrinsic width of your example image for aspect ratio hint
-          height={799} // Intrinsic height of your example image for aspect ratio hint
-          className="w-full h-auto object-contain max-h-[75vh]" // Responsive, maintain aspect, limit max height
+          width={1066} 
+          height={799} 
+          className="w-full h-auto object-contain max-h-[75vh]"
           sizes="(max-width: 768px) 100vw, (max-width: 1280px) 66vw, 850px"
           quality={95}
           priority
-          data-ai-hint={selectedImage.includes('placehold.co') ? 'placeholder car detail' : 'car detail large'}
+          data-ai-hint={mainImageSrc.includes('placehold.co') ? 'placeholder car detail' : 'car detail large'}
+          onError={handleMainImageError}
         />
       </div>
 
       {/* Thumbnail Grid */}
-      {effectiveImages.length > 1 && (
+      {images && images.length > 1 && ( // Only show thumbnails if there's more than one distinct image
         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
-          {effectiveImages.map((image, index) => (
+          {images.map((image, index) => (
             <button
               key={index}
-              onClick={() => setSelectedImage(image)}
+              onClick={() => {
+                setSelectedImageForDisplay(image);
+                setMainImageSrc(image); // Reset main image src to the new selection
+              }}
               className={cn(
                 "relative aspect-video w-full overflow-hidden rounded-md border-2 transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2",
-                selectedImage === image ? "border-primary" : "border-transparent hover:border-muted-foreground/50"
+                selectedImageForDisplay === image ? "border-primary" : "border-transparent hover:border-muted-foreground/50"
               )}
             >
               <Image
-                src={image}
+                src={image} // Use original image URL here
                 alt={`${altTextPrefix} - Thumbnail ${index + 1}`}
-                fill // fill is okay for thumbnails if aspect ratios are consistent or cropping is acceptable
+                layout="fill"
+                objectFit="cover"
                 sizes="(max-width: 640px) 33vw, (max-width: 1024px) 20vw, 15vw"
-                className="object-cover" // Cover is good for thumbnails
-                quality={75} // Lower quality for thumbnails is fine
-                priority={index < 3} 
-                data-ai-hint={image.includes('placehold.co') ? 'placeholder car thumbnail' : 'car thumbnail small'}
+                className="object-cover"
+                quality={75}
+                priority={index < 3}
+                data-ai-hint={'car thumbnail small'}
+                // Individual onError for thumbnails can be added if needed,
+                // but might be too much if all URLs are bad.
+                // For simplicity, we're focusing error handling on the main image.
               />
             </button>
           ))}
