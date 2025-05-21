@@ -1,7 +1,7 @@
 
 'use client';
 
-import Image from 'next/image';
+import Image from 'next/image'; // Still used for thumbnails
 import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
@@ -13,7 +13,6 @@ interface ImageGalleryProps {
 
 export function ImageGallery({ images, altTextPrefix }: ImageGalleryProps) {
   const [selectedImage, setSelectedImage] = useState(images && images.length > 0 ? images[0] : 'https://placehold.co/1066x799.png');
-  // Ensure effectiveImages always has at least one placeholder if the input is empty
   const effectiveImages = images && images.length > 0 ? images : ['https://placehold.co/1066x799.png'];
 
 
@@ -21,7 +20,7 @@ export function ImageGallery({ images, altTextPrefix }: ImageGalleryProps) {
     return (
       <Card className="overflow-hidden">
         <CardContent className="p-0">
-          <div className="w-full bg-muted flex items-center justify-center" style={{aspectRatio: '16/9'}}> {/* Fallback aspect ratio for no images */}
+          <div className="w-full bg-muted flex items-center justify-center" style={{aspectRatio: '16/9'}}>
             <p className="text-muted-foreground">No images available</p>
           </div>
         </CardContent>
@@ -34,23 +33,23 @@ export function ImageGallery({ images, altTextPrefix }: ImageGalleryProps) {
       <Card className="overflow-hidden shadow-md">
         <CardContent className="p-0">
           {/* Main Image Display */}
-          {/* Removed aspect-video. The div will now size based on the image content. */}
-          <div className="relative w-full bg-muted/20 flex justify-center items-center">
+          <div className="relative w-full bg-muted/20"> {/* Removed flex justify-center items-center */}
             <img
               src={selectedImage}
               alt={`${altTextPrefix} - Main View`}
-              className="block" 
+              className="block" // Ensures it behaves like a block element
               style={{
-                width: '100%', 
-                maxWidth: '1066px', 
-                height: 'auto', 
+                width: '100%', // Takes full width of its container
+                maxWidth: '1066px', // But not more than 1066px (or image's natural max width)
+                height: 'auto', // Maintains aspect ratio
+                margin: '0 auto', // Centers if maxWidth makes it narrower than container
               }}
               data-ai-hint={selectedImage.includes('placehold.co') ? 'placeholder car detail' : 'car detail'}
             />
           </div>
         </CardContent>
       </Card>
-      {effectiveImages.length > 1 && ( // Only show thumbnails if there's more than one image
+      {effectiveImages.length > 1 && (
         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
           {effectiveImages.map((image, index) => (
             <button
@@ -67,7 +66,7 @@ export function ImageGallery({ images, altTextPrefix }: ImageGalleryProps) {
                 layout="fill"
                 objectFit="cover"
                 sizes="150px"
-                quality={75}
+                quality={75} // Thumbnails can be lower quality
                 data-ai-hint={image.includes('placehold.co') ? 'placeholder car thumbnail' : 'car thumbnail'}
               />
             </button>
@@ -77,4 +76,3 @@ export function ImageGallery({ images, altTextPrefix }: ImageGalleryProps) {
     </div>
   );
 }
-
