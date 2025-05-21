@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Car, PlusCircle, ListChecks } from "lucide-react";
+import { Car, PlusCircle, ListChecks, Settings } from "lucide-react"; // Added Settings here
 import { getCars } from "@/lib/data"; // Assuming this function exists
 
 export default async function AdminDashboardPage() {
