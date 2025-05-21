@@ -29,26 +29,22 @@ export type CarFormData = z.infer<typeof carSchema>;
 export const contactSchema = z.object({
   name: z.string().min(1, { message: "Name is required." }),
   email: z.string().email({ message: "Invalid email address." }),
-  phone: z.preprocess(
-    (arg) => { // If it's an empty string or only spaces, make it undefined. Otherwise, pass as is.
-      if (typeof arg === 'string' && arg.trim() === '') return undefined;
-      if (arg === null) return undefined; // Also handle null explicitly if it can occur
-      return arg;
-    },
-    z.string() // Now, it must be a string (if not undefined from preprocess)
-      .refine(
-        (val) => { // val here is guaranteed to be a non-empty string.
-          const phoneNumberWithoutSpaces = val.replace(/\s+/g, '');
-          return /^\+?[1-9]\d{1,14}$/.test(phoneNumberWithoutSpaces);
-        },
-        { message: "Invalid phone number format. It should start with '+' and country code, or be a local number. Spaces are allowed." }
-      )
-      .optional() // This makes the refined string optional.
-  ),
+  phone: z.string()
+    .optional() // Makes the field itself optional (can be undefined)
+    .refine(val => {
+      // If val is undefined (field not submitted) or an empty string (or only whitespace), it's valid.
+      if (val === undefined || val.trim() === '') {
+        return true;
+      }
+      // If there's content, validate it.
+      const phoneNumberWithoutSpaces = val.replace(/\s+/g, '');
+      return /^\+?[1-9]\d{1,14}$/.test(phoneNumberWithoutSpaces);
+    }, {
+      message: "Invalid phone number format. If provided, it should start with '+' and country code. Spaces are allowed."
+    }),
   preferredContactMethod: z.enum(['email', 'phone'], { required_error: "Please select a preferred contact method."}),
   message: z.string().min(1, { message: "Message is required." }),
 });
 
 export type ContactFormData = z.infer<typeof contactSchema>;
 export type ContactFormDataForDb = Omit<ContactFormData, 'phone'> & { phone?: string };
-
