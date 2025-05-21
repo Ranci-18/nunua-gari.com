@@ -12,9 +12,9 @@ interface ImageGalleryProps {
 }
 
 export function ImageGallery({ images, altTextPrefix }: ImageGalleryProps) {
-  const [selectedImage, setSelectedImage] = useState(images && images.length > 0 ? images[0] : 'https://placehold.co/1200x900.png');
+  const [selectedImage, setSelectedImage] = useState(images && images.length > 0 ? images[0] : 'https://placehold.co/1066x799.png');
   // Ensure effectiveImages always has at least one placeholder if the input is empty
-  const effectiveImages = images && images.length > 0 ? images : ['https://placehold.co/1200x900.png'];
+  const effectiveImages = images && images.length > 0 ? images : ['https://placehold.co/1066x799.png'];
 
 
   if (!effectiveImages || effectiveImages.length === 0) {
@@ -34,12 +34,22 @@ export function ImageGallery({ images, altTextPrefix }: ImageGalleryProps) {
       <Card className="overflow-hidden shadow-md">
         <CardContent className="p-0">
           {/* Main Image Display */}
-          <div className="aspect-video relative w-full">
+          {/* The parent div will define the max available width. 
+              We add flex justify-center items-center to center the image if its maxWidth is less than the container.
+              A background color helps visualize the letterboxing if any. */}
+          <div className="relative w-full flex justify-center items-center bg-muted/20">
             <img
               src={selectedImage}
               alt={`${altTextPrefix} - Main View`}
-              className="absolute h-full w-full object-cover transition-opacity duration-300"
-              style={{ imageRendering: 'crisp-edges' }}
+              className="block" // Ensures display: block
+              style={{
+                width: '100%', // Takes full width of its parent container
+                maxWidth: '1066px', // Crucial: Do not upscale beyond image's typical native width or a reasonable large size.
+                                    // If image is 1066px wide, it won't render wider than that.
+                                    // If container is <1066px, it will scale down to fit (width: 100%).
+                height: 'auto', // Maintains aspect ratio
+                imageRendering: 'pixelated', // Tries to keep pixels sharp during scaling
+              }}
               data-ai-hint={selectedImage.includes('placehold.co') ? 'placeholder car detail' : 'car detail'}
             />
           </div>
@@ -61,8 +71,8 @@ export function ImageGallery({ images, altTextPrefix }: ImageGalleryProps) {
                 alt={`${altTextPrefix} - Thumbnail ${index + 1}`}
                 layout="fill"
                 objectFit="cover"
-                sizes="150px" // Thumbnails are relatively small
-                quality={75} // Default quality for thumbnails is fine
+                sizes="150px"
+                quality={75}
                 data-ai-hint={image.includes('placehold.co') ? 'placeholder car thumbnail' : 'car thumbnail'}
               />
             </button>
@@ -72,3 +82,4 @@ export function ImageGallery({ images, altTextPrefix }: ImageGalleryProps) {
     </div>
   );
 }
+
