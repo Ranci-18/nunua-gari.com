@@ -1,6 +1,7 @@
+
 'use client';
 
-import { useFormState } from 'react-dom';
+import { useActionState } from 'react'; // Changed from 'react-dom' and renamed
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { carSchema, type CarFormData } from '@/lib/schema';
@@ -44,7 +45,7 @@ const initialState = {
 };
 
 export function CarForm({ car, action }: CarFormProps) {
-  const [state, formAction] = useFormState(action, initialState);
+  const [state, formAction] = useActionState(action, initialState); // Renamed here
   const { toast } = useToast();
   const router = useRouter();
 

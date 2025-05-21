@@ -1,6 +1,7 @@
+
 'use client';
 
-import { useFormState } from 'react-dom';
+import { useActionState } from 'react'; // Changed from 'react-dom' and renamed
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { contactSchema, type ContactFormData } from '@/lib/schema';
@@ -30,7 +31,7 @@ const initialState = {
 };
 
 export function ContactForm() {
-  const [state, formAction] = useFormState(handleContactForm, initialState);
+  const [state, formAction] = useActionState(handleContactForm, initialState); // Renamed here
   const { toast } = useToast();
 
   const form = useForm<ContactFormData>({
