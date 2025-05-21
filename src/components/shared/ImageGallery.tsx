@@ -21,7 +21,7 @@ export function ImageGallery({ images, altTextPrefix }: ImageGalleryProps) {
     return (
       <Card className="overflow-hidden">
         <CardContent className="p-0">
-          <div className="aspect-video relative w-full bg-muted flex items-center justify-center">
+          <div className="w-full bg-muted flex items-center justify-center" style={{aspectRatio: '16/9'}}> {/* Fallback aspect ratio for no images */}
             <p className="text-muted-foreground">No images available</p>
           </div>
         </CardContent>
@@ -34,21 +34,16 @@ export function ImageGallery({ images, altTextPrefix }: ImageGalleryProps) {
       <Card className="overflow-hidden shadow-md">
         <CardContent className="p-0">
           {/* Main Image Display */}
-          {/* The parent div will define the max available width. 
-              We add flex justify-center items-center to center the image if its maxWidth is less than the container.
-              A background color helps visualize the letterboxing if any. */}
-          <div className="relative w-full flex justify-center items-center bg-muted/20">
+          {/* Removed aspect-video. The div will now size based on the image content. */}
+          <div className="relative w-full bg-muted/20 flex justify-center items-center">
             <img
               src={selectedImage}
               alt={`${altTextPrefix} - Main View`}
-              className="block" // Ensures display: block
+              className="block" 
               style={{
-                width: '100%', // Takes full width of its parent container
-                maxWidth: '1066px', // Crucial: Do not upscale beyond image's typical native width or a reasonable large size.
-                                    // If image is 1066px wide, it won't render wider than that.
-                                    // If container is <1066px, it will scale down to fit (width: 100%).
-                height: 'auto', // Maintains aspect ratio
-                // imageRendering: 'pixelated', // Removed this line
+                width: '100%', 
+                maxWidth: '1066px', 
+                height: 'auto', 
               }}
               data-ai-hint={selectedImage.includes('placehold.co') ? 'placeholder car detail' : 'car detail'}
             />
@@ -82,3 +77,4 @@ export function ImageGallery({ images, altTextPrefix }: ImageGalleryProps) {
     </div>
   );
 }
+
