@@ -1,3 +1,4 @@
+
 import type { Car } from '@/types';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -33,17 +34,19 @@ export function CarCard({ car }: CarCardProps) {
           </CardTitle>
         </Link>
         <div className="text-sm text-muted-foreground space-y-1">
-          <div className="flex items-center gap-2">
-            <Tag className="h-4 w-4 text-accent" />
-            <span>VIN: {car.vin.slice(0,5)}...{car.vin.slice(-5)}</span>
-          </div>
+          {car.vin && (
+            <div className="flex items-center gap-2">
+              <Tag className="h-4 w-4 text-accent" />
+              <span>VIN: {car.vin.slice(0,5)}...{car.vin.slice(-5)}</span>
+            </div>
+          )}
           <div className="flex items-center gap-2">
             <CalendarDays className="h-4 w-4 text-accent" />
             <span>Year: {car.year}</span>
           </div>
           <div className="flex items-center gap-2">
             <Gauge className="h-4 w-4 text-accent" />
-            <span>Mileage: {car.mileage.toLocaleString()} mi</span>
+            <span>Mileage: {car.mileage.toLocaleString()} kms</span>
           </div>
         </div>
       </CardContent>

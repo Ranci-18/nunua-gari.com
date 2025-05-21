@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useActionState } from 'react'; // Changed from 'react-dom' and renamed
+import { useActionState } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { carSchema, type CarFormData } from '@/lib/schema';
@@ -26,7 +26,7 @@ import { PlusCircle, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 interface CarFormProps {
-  car?: Car | null; // Optional for edit mode
+  car?: Car | null; 
   action: (prevState: any, formData: FormData) => Promise<{
     errors?: any;
     message: string;
@@ -45,7 +45,7 @@ const initialState = {
 };
 
 export function CarForm({ car, action }: CarFormProps) {
-  const [state, formAction] = useActionState(action, initialState); // Renamed here
+  const [state, formAction] = useActionState(action, initialState);
   const { toast } = useToast();
   const router = useRouter();
 
@@ -53,9 +53,9 @@ export function CarForm({ car, action }: CarFormProps) {
     resolver: zodResolver(carSchema),
     defaultValues: car ? {
       ...car,
-      // Ensure features and images are arrays, even if empty from data
       features: car.features || [], 
       images: car.images || [],
+      vin: car.vin || '', // Ensure VIN is empty string if undefined
     } : {
       make: '',
       model: '',
@@ -103,7 +103,6 @@ export function CarForm({ car, action }: CarFormProps) {
       if (state.redirectPath) {
         router.push(state.redirectPath);
       }
-      // form.reset(); // Reset after successful submission for create, or if navigating away
     } else if (state.message && (Object.keys(state.errors || {}).length > 0 || !state.success)) {
        toast({
         title: "Error",
@@ -111,7 +110,7 @@ export function CarForm({ car, action }: CarFormProps) {
         variant: "destructive",
       });
     }
-  }, [state, toast, form, car, router]);
+  }, [state, toast, car, router]);
 
   const fieldGroups = [
     {
@@ -121,7 +120,7 @@ export function CarForm({ car, action }: CarFormProps) {
         { name: "model", label: "Model", placeholder: "e.g., Camry" },
         { name: "year", label: "Year", type: "number", placeholder: "e.g., 2022" },
         { name: "price", label: "Price (Ksh)", type: "number", placeholder: "e.g., 2500000" },
-        { name: "mileage", label: "Mileage (mi)", type: "number", placeholder: "e.g., 15000" },
+        { name: "mileage", label: "Mileage (kms)", type: "number", placeholder: "e.g., 15000" },
       ]
     },
     {
@@ -132,7 +131,7 @@ export function CarForm({ car, action }: CarFormProps) {
         { name: "fuelType", label: "Fuel Type", placeholder: "e.g., Gasoline" },
         { name: "exteriorColor", label: "Exterior Color", placeholder: "e.g., Silver" },
         { name: "interiorColor", label: "Interior Color", placeholder: "e.g., Black" },
-        { name: "vin", label: "VIN", placeholder: "17-character Vehicle ID" },
+        { name: "vin", label: "VIN (Optional)", placeholder: "17-character Vehicle ID" },
       ]
     }
   ];
@@ -155,7 +154,7 @@ export function CarForm({ car, action }: CarFormProps) {
                                 <FormItem>
                                 <FormLabel>{f.label}</FormLabel>
                                 <FormControl>
-                                    <Input type={f.type || 'text'} placeholder={f.placeholder} {...field} />
+                                    <Input type={f.type || 'text'} placeholder={f.placeholder} {...field} value={field.value ?? ''} />
                                 </FormControl>
                                 <FormMessage />
                                 </FormItem>
@@ -228,7 +227,7 @@ export function CarForm({ car, action }: CarFormProps) {
                     {...form.register(`features.${index}` as const)}
                     placeholder={`Feature ${index + 1}`}
                     className="flex-grow"
-                    readOnly // Or make it editable if needed
+                    readOnly 
                     />
                     <Button type="button" variant="ghost" size="icon" onClick={() => removeFeature(index)} aria-label="Remove feature">
                         <Trash2 className="h-4 w-4 text-destructive" />

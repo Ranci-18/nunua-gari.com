@@ -1,3 +1,4 @@
+
 import { z } from 'zod';
 
 export const carSchema = z.object({
@@ -14,7 +15,12 @@ export const carSchema = z.object({
   fuelType: z.string().min(2, { message: "Fuel type is required." }),
   exteriorColor: z.string().min(2, { message: "Exterior color is required." }),
   interiorColor: z.string().min(2, { message: "Interior color is required." }),
-  vin: z.string().length(17, { message: "VIN must be 17 characters." }).regex(/^[A-HJ-NPR-Z0-9]{17}$/, { message: "Invalid VIN format." }),
+  vin: z.string()
+    .refine(val => val === '' || (val.length === 17 && /^[A-HJ-NPR-Z0-9]{17}$/.test(val)), {
+      message: "VIN must be 17 characters and follow valid format, or be empty.",
+    })
+    .optional()
+    .default(''), // Default to empty string if not provided
 });
 
 export type CarFormData = z.infer<typeof carSchema>;

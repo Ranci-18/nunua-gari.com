@@ -1,3 +1,4 @@
+
 export interface Car {
   id: string;
   make: string;
@@ -13,7 +14,7 @@ export interface Car {
   fuelType: string;
   exteriorColor: string;
   interiorColor: string;
-  vin: string;
+  vin?: string; // Made VIN optional
   createdAt: Date;
   updatedAt: Date;
 }

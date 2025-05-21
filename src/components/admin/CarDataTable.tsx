@@ -71,7 +71,7 @@ export function CarDataTable({ cars }: CarDataTableProps) {
               <TableCell className="font-medium">{car.make} {car.model}</TableCell>
               <TableCell>{car.year}</TableCell>
               <TableCell className="text-right">Ksh {car.price.toLocaleString()}</TableCell>
-              <TableCell>{car.vin}</TableCell>
+              <TableCell>{car.vin || 'N/A'}</TableCell>
               <TableCell className="text-right">
                 <AlertDialog>
                   <DropdownMenu>

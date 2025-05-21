@@ -1,20 +1,21 @@
+
 import type { Car } from '@/types';
 import { ImageGallery } from '@/components/shared/ImageGallery';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { CheckCircle, CalendarDays, Gauge, Wrench, Palette, CarIcon, Settings, Fuel, TagIcon } from 'lucide-react'; // Changed Tag to TagIcon
+import { CheckCircle, CalendarDays, Gauge, Wrench, Palette, CarIcon, Settings, Fuel, TagIcon } from 'lucide-react';
 
 interface CarDetailsDisplayProps {
   car: Car;
 }
 
-const DetailItem: React.FC<{ icon: React.ReactNode; label: string; value: string | number }> = ({ icon, label, value }) => (
+const DetailItem: React.FC<{ icon: React.ReactNode; label: string; value?: string | number }> = ({ icon, label, value }) => (
   <div className="flex items-start">
     <span className="text-accent mr-3 mt-1 shrink-0">{icon}</span>
     <div>
       <p className="text-sm font-medium text-muted-foreground">{label}</p>
-      <p className="text-md font-semibold">{value}</p>
+      <p className="text-md font-semibold">{value || 'N/A'}</p>
     </div>
   </div>
 );
@@ -37,7 +38,7 @@ export function CarDetailsDisplay({ car }: CarDetailsDisplayProps) {
               Ksh {car.price.toLocaleString()}
             </p>
             <div className="space-y-3">
-              <DetailItem icon={<Gauge className="h-5 w-5" />} label="Mileage" value={`${car.mileage.toLocaleString()} mi`} />
+              <DetailItem icon={<Gauge className="h-5 w-5" />} label="Mileage" value={`${car.mileage.toLocaleString()} kms`} />
               <DetailItem icon={<CalendarDays className="h-5 w-5" />} label="First Registered" value={new Date(car.createdAt).toLocaleDateString()} />
               <DetailItem icon={<TagIcon className="h-5 w-5" />} label="VIN" value={car.vin} />
             </div>
