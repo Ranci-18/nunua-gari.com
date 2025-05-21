@@ -31,14 +31,13 @@ const nextConfig: NextConfig = {
       }
     ],
   },
+  serverExternalPackages: ['mongodb'], // Ensure mongodb is external for RSC
   experimental: {
     allowedDevOrigins: [
         "*",
         "https://9005-firebase-studio-1747811799289.cluster-c3a7z3wnwzapkx3rfr5kz62dac.cloudworkstations.dev",
     ],
-    serverComponentsExternalPackages: ['mongodb'], // Ensure mongodb is external for RSC
   },
-  
   webpack: (config, { isServer }) => {
     // Ensure resolve.alias exists and initialize if not
     config.resolve.alias = config.resolve.alias || {};
