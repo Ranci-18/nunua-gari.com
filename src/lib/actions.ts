@@ -46,18 +46,57 @@ export async function handleContactForm(prevState: any, formData: FormData) {
   }
 }
 
+// Helper function to extract array data from FormData based on react-hook-form's naming convention (e.g., images.0, images.1)
+function extractArrayFromFormData(formData: FormData, baseName: string): string[] {
+  const array: string[] = [];
+  let i = 0;
+  while (true) {
+    const value = formData.get(`${baseName}.${i}`);
+    if (value === null) { // formData.get returns null if key doesn't exist, indicating end of array
+      break;
+    }
+    if (typeof value === 'string') {
+        array.push(value);
+    }
+    // If value is a File, String(value) might not be what we want, but schema expects string URLs for images
+    // and string features. For this app, we assume string values.
+    i++;
+  }
+  return array;
+}
+
 
 // Admin Car Actions
 export async function createCarAction(prevState: any, formData: FormData) {
-  const rawFormData = {
-    ...Object.fromEntries(formData.entries()),
-    features: formData.getAll('features[]'),
-    images: formData.getAll('images[]').map(img => String(img).trim()).filter(img => img !== ''), // Filter empty strings and trim
+  const imagesFromForm = extractArrayFromFormData(formData, 'images')
+    .map(img => String(img).trim())
+    .filter(img => img !== ''); // Filter empty strings
+
+  const featuresFromForm = extractArrayFromFormData(formData, 'features')
+    .map(feat => String(feat).trim())
+    .filter(feat => feat !== ''); // Filter empty strings
+
+  const processedFormData = {
+    make: formData.get('make') as string || '',
+    model: formData.get('model') as string || '',
+    year: formData.get('year') as string || '', // Zod will coerce
+    price: formData.get('price') as string || '', // Zod will coerce
+    mileage: formData.get('mileage') as string || '', // Zod will coerce
+    description: formData.get('description') as string || '',
+    engine: formData.get('engine') as string || '',
+    transmission: formData.get('transmission') as string || '',
+    fuelType: formData.get('fuelType') as string || '',
+    exteriorColor: formData.get('exteriorColor') as string || '',
+    interiorColor: formData.get('interiorColor') as string || '',
+    vin: formData.get('vin') as string || '',
+    images: imagesFromForm,
+    features: featuresFromForm,
   };
   
-  const validatedFields = carSchema.safeParse(rawFormData);
+  const validatedFields = carSchema.safeParse(processedFormData);
 
   if (!validatedFields.success) {
+    console.log("Validation Errors (Create):", validatedFields.error.flatten().fieldErrors);
     return {
       errors: validatedFields.error.flatten().fieldErrors,
       message: 'Validation failed. Please check the car details.',
@@ -79,15 +118,35 @@ export async function createCarAction(prevState: any, formData: FormData) {
 }
 
 export async function updateCarAction(id: string, prevState: any, formData: FormData) {
-  const rawFormData = {
-    ...Object.fromEntries(formData.entries()),
-    features: formData.getAll('features[]'),
-    images: formData.getAll('images[]').map(img => String(img).trim()).filter(img => img !== ''), // Filter empty strings and trim
+  const imagesFromForm = extractArrayFromFormData(formData, 'images')
+    .map(img => String(img).trim())
+    .filter(img => img !== ''); // Filter empty strings
+
+  const featuresFromForm = extractArrayFromFormData(formData, 'features')
+    .map(feat => String(feat).trim())
+    .filter(feat => feat !== ''); // Filter empty strings
+  
+  const processedFormData = {
+    make: formData.get('make') as string || '',
+    model: formData.get('model') as string || '',
+    year: formData.get('year') as string || '', // Zod will coerce
+    price: formData.get('price') as string || '', // Zod will coerce
+    mileage: formData.get('mileage') as string || '', // Zod will coerce
+    description: formData.get('description') as string || '',
+    engine: formData.get('engine') as string || '',
+    transmission: formData.get('transmission') as string || '',
+    fuelType: formData.get('fuelType') as string || '',
+    exteriorColor: formData.get('exteriorColor') as string || '',
+    interiorColor: formData.get('interiorColor') as string || '',
+    vin: formData.get('vin') as string || '',
+    images: imagesFromForm,
+    features: featuresFromForm,
   };
   
-  const validatedFields = carSchema.safeParse(rawFormData);
+  const validatedFields = carSchema.safeParse(processedFormData);
 
   if (!validatedFields.success) {
+    console.log("Validation Errors (Update):", validatedFields.error.flatten().fieldErrors);
     return {
       errors: validatedFields.error.flatten().fieldErrors,
       message: 'Validation failed. Please check the car details.',
