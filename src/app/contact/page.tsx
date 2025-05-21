@@ -63,7 +63,7 @@ export default function ContactPage() {
                 <div>
                   <h3 className="font-semibold">Address</h3>
                   <p className="text-muted-foreground">
-                    123 Auto Drive, Car City, CA 90210
+                    N/A
                   </p>
                 </div>
               </div>
