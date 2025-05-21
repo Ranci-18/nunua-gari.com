@@ -53,7 +53,7 @@ export function ContactForm() {
         title: "Message Sent!",
         description: state.message,
       });
-      form.reset();
+      form.reset(); // Reset form fields to defaultValues
     } else if (state.message && !state.success) {
       // General error toast
       toast({
@@ -64,13 +64,19 @@ export function ContactForm() {
 
       // Set field-specific errors from server validation
       if (state.errors) {
+        // Clear previous server errors first (optional, but can be good practice)
+        // Object.keys(form.getValues()).forEach(key => form.clearErrors(key as keyof ContactFormData));
+
         for (const fieldName in state.errors) {
-          const messages = state.errors[fieldName];
-          if (messages && messages.length > 0) {
-            form.setError(fieldName as keyof ContactFormData, {
-              type: 'server',
-              message: messages[0], // Display the first error message for the field
-            });
+          // Ensure fieldName is a key of ContactFormData before trying to set an error
+          if (Object.prototype.hasOwnProperty.call(form.getValues(), fieldName)) {
+            const messages = state.errors[fieldName as keyof ContactFormData];
+            if (messages && messages.length > 0) {
+              form.setError(fieldName as keyof ContactFormData, {
+                type: 'server',
+                message: messages[0], // Display the first error message for the field
+              });
+            }
           }
         }
       }
@@ -128,7 +134,7 @@ export function ContactForm() {
               <FormControl>
                 <RadioGroup
                   onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  value={field.value} // Changed from defaultValue to value
                   className="flex flex-col space-y-1 sm:flex-row sm:space-y-0 sm:space-x-4"
                 >
                   <FormItem className="flex items-center space-x-3 space-y-0">
