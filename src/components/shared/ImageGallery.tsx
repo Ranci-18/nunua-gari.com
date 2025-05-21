@@ -48,7 +48,7 @@ export function ImageGallery({ images, altTextPrefix }: ImageGalleryProps) {
                                     // If image is 1066px wide, it won't render wider than that.
                                     // If container is <1066px, it will scale down to fit (width: 100%).
                 height: 'auto', // Maintains aspect ratio
-                imageRendering: 'pixelated', // Tries to keep pixels sharp during scaling
+                // imageRendering: 'pixelated', // Removed this line
               }}
               data-ai-hint={selectedImage.includes('placehold.co') ? 'placeholder car detail' : 'car detail'}
             />
@@ -82,4 +82,3 @@ export function ImageGallery({ images, altTextPrefix }: ImageGalleryProps) {
     </div>
   );
 }
-
