@@ -11,18 +11,23 @@ interface CarCardProps {
 }
 
 export function CarCard({ car }: CarCardProps) {
+  const primaryImage = car.images && car.images.length > 0 ? car.images[0] : 'https://placehold.co/600x400.png';
+  const imageAlt = `${car.make} ${car.model}`;
+
   return (
     <Card className="flex flex-col overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
       <CardHeader className="p-0">
         <Link href={`/cars/${car.id}`} className="block">
           <div className="aspect-video relative w-full overflow-hidden">
             <Image
-              src={car.images[0]}
-              alt={`${car.make} ${car.model}`}
+              src={primaryImage}
+              alt={imageAlt}
               layout="fill"
               objectFit="cover"
               className="hover:scale-105 transition-transform duration-300"
-              data-ai-hint={`${car.make} ${car.model}`}
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              data-ai-hint={primaryImage === 'https://placehold.co/600x400.png' ? 'placeholder car' : `${car.make} ${car.model}`}
+              priority={false} // Only set priority for above-the-fold images on initial load (e.g., hero)
             />
           </div>
         </Link>

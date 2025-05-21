@@ -1,6 +1,6 @@
 
 export interface Car {
-  id: string;
+  id: string; // Will be MongoDB's _id.toString()
   make: string;
   model: string;
   year: number;
@@ -14,7 +14,7 @@ export interface Car {
   fuelType: string;
   exteriorColor: string;
   interiorColor: string;
-  vin?: string; // Made VIN optional
+  vin?: string; 
   createdAt: Date;
   updatedAt: Date;
 }

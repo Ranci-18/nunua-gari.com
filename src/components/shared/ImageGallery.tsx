@@ -1,3 +1,4 @@
+
 'use client';
 
 import Image from 'next/image';
@@ -11,9 +12,12 @@ interface ImageGalleryProps {
 }
 
 export function ImageGallery({ images, altTextPrefix }: ImageGalleryProps) {
-  const [selectedImage, setSelectedImage] = useState(images[0]);
+  const [selectedImage, setSelectedImage] = useState(images && images.length > 0 ? images[0] : 'https://placehold.co/800x600.png');
+  const effectiveImages = images && images.length > 0 ? images : ['https://placehold.co/800x600.png'];
 
-  if (!images || images.length === 0) {
+
+  if (!effectiveImages || effectiveImages.length === 0) {
+    // This case should ideally not be hit if we provide a default above, but as a fallback:
     return (
       <Card className="overflow-hidden">
         <CardContent className="p-0">
@@ -34,17 +38,19 @@ export function ImageGallery({ images, altTextPrefix }: ImageGalleryProps) {
               src={selectedImage}
               alt={`${altTextPrefix} - Main View`}
               layout="fill"
-              objectFit="contain"
+              objectFit="contain" 
               className="transition-opacity duration-300"
-              priority
-              data-ai-hint="car detail"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 66vw, 50vw"
+              priority // Main image on a details page can be high priority
+              quality={85} // Slightly increase quality if blurriness is an issue, default is 75
+              data-ai-hint={selectedImage.includes('placehold.co') ? 'placeholder car detail' : 'car detail'}
             />
           </div>
         </CardContent>
       </Card>
-      {images.length > 1 && (
+      {effectiveImages.length > 1 && ( // Only show thumbnails if there's more than one image
         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
-          {images.map((image, index) => (
+          {effectiveImages.map((image, index) => (
             <button
               key={index}
               onClick={() => setSelectedImage(image)}
@@ -58,7 +64,8 @@ export function ImageGallery({ images, altTextPrefix }: ImageGalleryProps) {
                 alt={`${altTextPrefix} - Thumbnail ${index + 1}`}
                 layout="fill"
                 objectFit="cover"
-                data-ai-hint="car thumbnail"
+                sizes="100px" // Provide a hint for thumbnail sizes
+                data-ai-hint={image.includes('placehold.co') ? 'placeholder car thumbnail' : 'car thumbnail'}
               />
             </button>
           ))}

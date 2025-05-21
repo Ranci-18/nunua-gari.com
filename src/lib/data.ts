@@ -1,229 +1,110 @@
 
 import type { Car } from '@/types';
+import { clientPromise, ObjectId } from './mongodb';
+import type { Collection, Document } from 'mongodb';
 
-let cars: Car[] = [
-  {
-    id: '1',
-    make: 'Toyota',
-    model: 'Camry',
-    year: 2022,
-    price: 2800000, // Ksh
-    mileage: 15000,
-    description: 'A reliable and fuel-efficient sedan, perfect for families and commuters. Well-maintained with low mileage.',
-    images: ['https://placehold.co/600x400.png', 'https://placehold.co/600x400.png', 'https://placehold.co/600x400.png'],
-    features: ['Bluetooth', 'Backup Camera', 'Lane Assist', 'Apple CarPlay'],
-    engine: '2.5L',
-    transmission: 'Automatic',
-    fuelType: 'Gasoline',
-    exteriorColor: 'Silver',
-    interiorColor: 'Black',
-    vin: '1ABC123XYZ7890001',
-    createdAt: new Date('2023-01-15T09:00:00Z'),
-    updatedAt: new Date('2023-05-20T14:30:00Z'),
-  },
-  {
-    id: '2',
-    make: 'Honda',
-    model: 'CR-V',
-    year: 2021,
-    price: 3200000, // Ksh
-    mileage: 22000,
-    description: 'Spacious and versatile SUV with all-wheel drive. Great for adventures and daily driving.',
-    images: ['https://placehold.co/600x400.png', 'https://placehold.co/600x400.png', 'https://placehold.co/600x400.png'],
-    features: ['Sunroof', 'Heated Seats', 'AWD', 'Android Auto'],
-    engine: '1.5L Turbo',
-    transmission: 'CVT',
-    fuelType: 'Gasoline',
-    exteriorColor: 'Red',
-    interiorColor: 'Gray',
-    vin: '2DEF456UVW4560002',
-    createdAt: new Date('2023-02-10T11:00:00Z'),
-    updatedAt: new Date('2023-06-01T10:00:00Z'),
-  },
-  {
-    id: '3',
-    make: 'Ford',
-    model: 'F-150',
-    year: 2020,
-    price: 4500000, // Ksh
-    mileage: 35000,
-    description: 'Powerful and rugged pickup truck. Ready for work or play, with impressive towing capacity.',
-    images: ['https://placehold.co/600x400.png', 'https://placehold.co/600x400.png', 'https://placehold.co/600x400.png'],
-    features: ['Towing Package', '4x4', 'Touchscreen Display', 'Bed Liner'],
-    engine: '3.5L V6',
-    transmission: 'Automatic',
-    fuelType: 'Gasoline',
-    exteriorColor: 'Blue',
-    interiorColor: 'Tan',
-    vin: '3GHI789RST1230003',
-    createdAt: new Date('2022-12-01T15:00:00Z'),
-    updatedAt: new Date('2023-04-10T09:15:00Z'),
-  },
-  {
-    id: '4',
-    make: 'BMW',
-    model: '3 Series',
-    year: 2023,
-    price: 5200000, // Ksh
-    mileage: 5000,
-    description: 'Luxury sport sedan with dynamic performance and premium features. Almost new condition.',
-    images: ['https://placehold.co/600x400.png', 'https://placehold.co/600x400.png', 'https://placehold.co/600x400.png'],
-    features: ['Leather Seats', 'Navigation System', 'Harman Kardon Sound', 'Parking Sensors'],
-    engine: '2.0L Turbo',
-    transmission: 'Automatic',
-    fuelType: 'Gasoline',
-    exteriorColor: 'Black Sapphire Metallic',
-    interiorColor: 'Cognac Vernasca Leather',
-    vin: '4JKL012PQR7890004',
-    createdAt: new Date('2023-08-15T10:00:00Z'),
-    updatedAt: new Date('2023-09-01T16:20:00Z'),
-  },
-  {
-    id: '5',
-    make: 'Tesla',
-    model: 'Model 3',
-    year: 2023,
-    price: 5500000, // Ksh
-    mileage: 10000,
-    description: 'Cutting-edge electric sedan with impressive range and Autopilot features.',
-    images: ['https://placehold.co/600x400.png', 'https://placehold.co/600x400.png', 'https://placehold.co/600x400.png'],
-    features: ['Autopilot', 'Premium Interior', 'Panoramic Glass Roof', '15-inch Touchscreen'],
-    engine: 'Electric Motor',
-    transmission: 'Automatic',
-    fuelType: 'Electric',
-    exteriorColor: 'Pearl White Multi-Coat',
-    interiorColor: 'All Black',
-    vin: '5YJSA1CN0FL000005',
-    createdAt: new Date('2023-07-20T14:00:00Z'),
-    updatedAt: new Date('2023-09-10T11:00:00Z'),
-  },
-  {
-    id: '6',
-    make: 'Volkswagen',
-    model: 'Golf TDI',
-    year: 2021,
-    price: 2300000, // Ksh
-    mileage: 30000,
-    description: 'Fuel-efficient diesel hatchback, known for its reliability and practicality.',
-    images: ['https://placehold.co/600x400.png', 'https://placehold.co/600x400.png', 'https://placehold.co/600x400.png'],
-    features: ['Apple CarPlay', 'Android Auto', 'Blind Spot Monitor', 'Adaptive Cruise Control'],
-    engine: '2.0L TDI',
-    transmission: 'Automatic',
-    fuelType: 'Diesel',
-    exteriorColor: 'Dark Blue',
-    interiorColor: 'Titan Black Cloth',
-    vin: 'WVWZZZAUZMP000006',
-    createdAt: new Date('2023-03-05T09:30:00Z'),
-    updatedAt: new Date('2023-08-25T15:00:00Z'),
-  },
-  {
-    id: '7',
-    make: 'Mazda',
-    model: 'MX-5 Miata',
-    year: 2022,
-    price: 3000000, // Ksh
-    mileage: 8000,
-    description: 'Iconic roadster that offers pure driving fun with its manual transmission and agile handling.',
-    images: ['https://placehold.co/600x400.png', 'https://placehold.co/600x400.png', 'https://placehold.co/600x400.png'],
-    features: ['Convertible Soft Top', 'Bose Audio System', 'Limited-Slip Differential', 'Sport-Tuned Suspension'],
-    engine: '2.0L SkyActiv',
-    transmission: 'Manual',
-    fuelType: 'Gasoline',
-    exteriorColor: 'Soul Red Crystal Metallic',
-    interiorColor: 'Black Leather',
-    vin: 'JM1ND0EGXN0000007',
-    createdAt: new Date('2023-06-10T16:00:00Z'),
-    updatedAt: new Date('2023-09-05T10:45:00Z'),
-  },
-  {
-    id: '8',
-    make: 'Subaru',
-    model: 'Outback',
-    year: 2020,
-    price: 2900000, // Ksh
-    mileage: 45000,
-    description: 'Dependable all-wheel-drive wagon, perfect for all weather conditions and outdoor activities.',
-    images: ['https://placehold.co/600x400.png', 'https://placehold.co/600x400.png', 'https://placehold.co/600x400.png'],
-    features: ['Symmetrical AWD', 'EyeSight Driver Assist', 'Roof Rails', 'Heated Seats'],
-    engine: '2.5L Boxer',
-    transmission: 'CVT',
-    fuelType: 'Gasoline',
-    exteriorColor: 'Green',
-    interiorColor: 'Gray Cloth',
-    vin: '4S4BSBFD0L3000008',
-    createdAt: new Date('2022-11-01T12:00:00Z'),
-    updatedAt: new Date('2023-07-15T08:30:00Z'),
-  },
-  {
-    id: '9',
-    make: 'Toyota',
-    model: 'Hilux',
-    year: 2025,
-    price: 1000000,
-    mileage: 10000,
-    description: 'Powerful diesel truck, ready for any adventure or work task.',
-    images: [
-      'https://placehold.co/600x400.png',
-      'https://placehold.co/600x400.png',
-      'https://placehold.co/600x400.png',
-    ],
-    features: ['4x4 Capability', 'Tow Hitch Assembly'],
-    engine: '2.5L Diesel',
-    transmission: 'Manual',
-    fuelType: 'Diesel',
-    exteriorColor: 'Grey',
-    interiorColor: 'Black',
-    vin: 'DUMMYVINHILUX0009',
-    createdAt: new Date('2024-03-10T10:00:00Z'),
-    updatedAt: new Date('2024-03-10T10:00:00Z'),
-  }
-];
+const DB_NAME = process.env.MONGODB_DB_NAME || 'premiumAutoDB'; // You can make DB name configurable
+const CARS_COLLECTION = 'cars';
 
-// I also simplified some of the transmission values (e.g., "8-Speed Automatic" to just "Automatic")
-// to make the filter dropdowns less cluttered with very specific transmission types.
-// If you need more granular transmission types in filters, you can keep the detailed names.
+async function getCarsCollection(): Promise<Collection<Document>> {
+  const client = await clientPromise;
+  const db = client.db(DB_NAME);
+  return db.collection(CARS_COLLECTION);
+}
+
+// Helper to convert MongoDB document to Car type
+function docToCar(doc: Document): Car {
+  return {
+    id: doc._id.toString(),
+    make: doc.make,
+    model: doc.model,
+    year: doc.year,
+    price: doc.price,
+    mileage: doc.mileage,
+    description: doc.description,
+    images: doc.images,
+    features: doc.features,
+    engine: doc.engine,
+    transmission: doc.transmission,
+    fuelType: doc.fuelType,
+    exteriorColor: doc.exteriorColor,
+    interiorColor: doc.interiorColor,
+    vin: doc.vin,
+    createdAt: new Date(doc.createdAt),
+    updatedAt: new Date(doc.updatedAt),
+  };
+}
+
 
 export async function getCars(): Promise<Car[]> {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 500));
-  return cars.sort((a,b) => b.createdAt.getTime() - a.createdAt.getTime());
+  const carsCollection = await getCarsCollection();
+  const carDocs = await carsCollection.find({}).sort({ createdAt: -1 }).toArray();
+  return carDocs.map(docToCar);
 }
 
 export async function getCarById(id: string): Promise<Car | undefined> {
-  await new Promise(resolve => setTimeout(resolve, 300));
-  return cars.find(car => car.id === id);
+  if (!ObjectId.isValid(id)) {
+    return undefined;
+  }
+  const carsCollection = await getCarsCollection();
+  const carDoc = await carsCollection.findOne({ _id: new ObjectId(id) });
+  return carDoc ? docToCar(carDoc) : undefined;
 }
 
 export async function addCar(carData: Omit<Car, 'id' | 'createdAt' | 'updatedAt'>): Promise<Car> {
-  await new Promise(resolve => setTimeout(resolve, 500));
-  const newCar: Car = {
+  const carsCollection = await getCarsCollection();
+  const now = new Date();
+  const carDocument = {
     ...carData,
-    id: String(Date.now()) + Math.random().toString(36).substring(2,7), // Simple unique ID generation
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    createdAt: now,
+    updatedAt: now,
   };
-  cars.unshift(newCar); // Add to the beginning of the array
-  return newCar;
+  const result = await carsCollection.insertOne(carDocument);
+  
+  return {
+    ...carData,
+    id: result.insertedId.toString(),
+    createdAt: now,
+    updatedAt: now,
+  };
 }
 
 export async function updateCar(id: string, carData: Partial<Omit<Car, 'id' | 'createdAt' | 'updatedAt'>>): Promise<Car | null> {
-  await new Promise(resolve => setTimeout(resolve, 500));
-  const carIndex = cars.findIndex(car => car.id === id);
-  if (carIndex === -1) {
+  if (!ObjectId.isValid(id)) {
     return null;
   }
-  cars[carIndex] = {
-    ...cars[carIndex],
-    ...carData,
-    updatedAt: new Date(),
+  const carsCollection = await getCarsCollection();
+  const now = new Date();
+  
+  const updateDoc = {
+    $set: {
+      ...carData,
+      updatedAt: now,
+    },
   };
-  return cars[carIndex];
+
+  const result = await carsCollection.findOneAndUpdate(
+    { _id: new ObjectId(id) },
+    updateDoc,
+    { returnDocument: 'after' }
+  );
+
+  return result ? docToCar(result) : null;
 }
 
 export async function deleteCar(id: string): Promise<boolean> {
-  await new Promise(resolve => setTimeout(resolve, 500));
-  const initialLength = cars.length;
-  cars = cars.filter(car => car.id !== id);
-  return cars.length < initialLength;
+  if (!ObjectId.isValid(id)) {
+    return false;
+  }
+  const carsCollection = await getCarsCollection();
+  const result = await carsCollection.deleteOne({ _id: new ObjectId(id) });
+  return result.deletedCount === 1;
 }
 
+// The initial in-memory car data is no longer used.
+// You would typically run a script to migrate this data to your MongoDB database once.
+/*
+let cars: Car[] = [
+  // ... initial car data was here
+];
+*/
