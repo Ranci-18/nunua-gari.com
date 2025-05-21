@@ -33,17 +33,16 @@ export function ImageGallery({ images, altTextPrefix }: ImageGalleryProps) {
       <Card className="overflow-hidden shadow-md">
         <CardContent className="p-0">
           {/* Main Image Display */}
-          {/* This div acts as the container whose width the image will respect (up to its natural size) */}
           <div className="relative w-full bg-muted/20">
             <img
               src={selectedImage}
               alt={`${altTextPrefix} - Main View`}
-              className="block" // Ensures it behaves like a block element and respects margin: auto
+              className="block" // Ensures it behaves like a block element
               style={{
-                width: 'auto',        // Image will take its natural width
-                maxWidth: '100%',     // But not exceed the width of its container (the div above)
+                width: '100%',        // Image will try to take full width of its parent div
+                maxWidth: '1066px',   // But will not exceed 1066px (or a suitable max for your design)
                 height: 'auto',       // Maintains aspect ratio
-                margin: '0 auto',     // Centers the image within its container if natural width is less than container width
+                margin: '0 auto',     // Centers the image horizontally if maxWidth makes it narrower than its parent div
               }}
               data-ai-hint={selectedImage.includes('placehold.co') ? 'placeholder car detail' : 'car detail'}
             />
@@ -77,4 +76,3 @@ export function ImageGallery({ images, altTextPrefix }: ImageGalleryProps) {
     </div>
   );
 }
-
