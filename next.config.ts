@@ -19,7 +19,13 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'i.postimg.cc', // Added PostImage hostname
+        hostname: 'i.postimg.cc', // Existing PostImage CDN hostname
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'postimg.cc', // Added main PostImage hostname
         port: '',
         pathname: '/**',
       }
@@ -59,7 +65,7 @@ const nextConfig: NextConfig = {
       };
     }
 
- serverExternalPackages: ['mongodb']
+    config.externals = [...config.externals, 'mongodb']; // Keep mongodb as external
     return config;
   },
 };
