@@ -1,11 +1,13 @@
+
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Car, Mail, ShieldCheck } from 'lucide-react';
+import { Menu, Car, Mail, ShieldCheck, List } from 'lucide-react'; // Added List icon
 import { Logo } from '@/components/shared/Logo';
 
 const navLinks = [
-  { href: '/', label: 'Listings', icon: <Car className="h-5 w-5" /> },
+  { href: '/', label: 'Home', icon: <Car className="h-5 w-5" /> }, // Changed to Home
+  { href: '/listings', label: 'Listings', icon: <List className="h-5 w-5" /> }, // New Listings link
   { href: '/contact', label: 'Contact Us', icon: <Mail className="h-5 w-5" /> },
   { href: '/admin', label: 'Admin Panel', icon: <ShieldCheck className="h-5 w-5" /> },
 ];

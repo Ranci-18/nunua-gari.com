@@ -2,7 +2,6 @@
 import { getCars } from '@/lib/data';
 import { CarCard } from '@/components/cars/CarCard';
 import { Container } from '@/components/shared/Container';
-import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -23,8 +22,6 @@ const CustomerFocusIcon = () => (
 export default async function HomePage() {
   const allCars: Car[] = await getCars();
   const featuredCars = allCars.slice(0, 3);
-  const otherCars = allCars.length > 3 ? allCars.slice(3) : (allCars.length > 0 && allCars.length <=3 ? [] : allCars);
-
 
   return (
     <>
@@ -49,7 +46,7 @@ export default async function HomePage() {
           </p>
           <div className="mt-10">
             <Button size="lg" asChild className="shadow-lg hover:shadow-primary/30 transition-shadow">
-              <Link href="#featured-listings">Explore Our Cars</Link>
+              <Link href="/listings">Explore Our Cars</Link>
             </Button>
           </div>
         </Container>
@@ -105,33 +102,28 @@ export default async function HomePage() {
         </Container>
       </section>
 
-      {/* All Listings Section */}
-      <Container className="py-12 md:py-16" id="all-listings">
-         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold tracking-tight text-primary sm:text-4xl">
-            Explore All Vehicles
-          </h2>
-          <p className="mt-3 text-lg text-muted-foreground">
-            Browse our complete inventory of quality pre-owned cars.
-          </p>
-        </div>
-        {allCars.length === 0 ? (
-          <p className="text-center text-muted-foreground text-lg py-10">
-            No cars available at the moment. Please check back later.
-          </p>
-        ) : otherCars.length === 0 && featuredCars.length > 0 ? (
-           <p className="text-center text-muted-foreground text-lg py-10">
-            All available cars are featured above. More coming soon!
-          </p>
-        ) : (
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {otherCars.map((car) => (
-              <CarCard key={car.id} car={car} />
-            ))}
-          </div>
-        )}
-      </Container>
-      <Separator className="my-8" />
+      {/* Message if no featured cars and no other cars either */}
+      {allCars.length === 0 && (
+          <Container className="py-12 md:py-16">
+            <p className="text-center text-muted-foreground text-lg py-10">
+                No cars available at the moment. Please check back later.
+            </p>
+          </Container>
+      )}
+       {/* Optional: Add a section to encourage visiting all listings if there are more cars than featured */}
+      {allCars.length > featuredCars.length && (
+        <Container className="py-12 md:py-16 text-center">
+            <h2 className="text-2xl font-bold tracking-tight text-primary sm:text-3xl">
+                See All Our Vehicles
+            </h2>
+            <p className="mt-3 text-md text-muted-foreground">
+                We have more cars available. Click below to see them all.
+            </p>
+            <Button size="lg" asChild className="mt-6 shadow-lg hover:shadow-primary/30 transition-shadow">
+                <Link href="/listings">View All Listings</Link>
+            </Button>
+        </Container>
+      )}
     </>
   );
 }
