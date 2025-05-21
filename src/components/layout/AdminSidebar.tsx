@@ -1,8 +1,9 @@
+
 'use client';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Car, LayoutDashboard, Settings, PlusCircle } from 'lucide-react';
+import { Car, LayoutDashboard, Settings, PlusCircle, MessageSquare } from 'lucide-react'; // Added MessageSquare
 import {
   Sidebar,
   SidebarContent,
@@ -20,6 +21,7 @@ const adminNavLinks = [
   { href: '/admin', label: 'Dashboard', icon: <LayoutDashboard /> },
   { href: '/admin/cars', label: 'Manage Cars', icon: <Car /> },
   { href: '/admin/cars/new', label: 'Add New Car', icon: <PlusCircle /> },
+  { href: '/admin/messages', label: 'Messages', icon: <MessageSquare /> }, // New messages link
   // { href: '/admin/settings', label: 'Settings', icon: <Settings /> },
 ];
 

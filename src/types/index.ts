@@ -14,15 +14,22 @@ export interface Car {
   fuelType: string;
   exteriorColor: string;
   interiorColor: string;
-  vin?: string; 
+  vin?: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
-export interface ContactMessage {
+export interface ContactFormDataForDb {
   name: string;
   email: string;
   phone?: string;
   preferredContactMethod: 'email' | 'phone';
   message: string;
+}
+
+export interface ContactMessageDb extends ContactFormDataForDb {
+  id: string; // Will be MongoDB's _id.toString()
+  isRead: boolean;
+  createdAt: Date;
+  // updatedAt: Date; // Could be added if we track updates to the message itself
 }
