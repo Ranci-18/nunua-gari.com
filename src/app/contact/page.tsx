@@ -1,3 +1,4 @@
+
 import { ContactForm } from '@/components/forms/ContactForm';
 import { Container } from '@/components/shared/Container';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -43,8 +44,8 @@ export default function ContactPage() {
                 <Mail className="h-6 w-6 text-accent mt-1" />
                 <div>
                   <h3 className="font-semibold">Email</h3>
-                  <a href="mailto:support@premiumauto.com" className="text-primary hover:underline">
-                    support@premiumauto.com
+                  <a href="mailto:francisnganga238@gmail.com" className="text-primary hover:underline">
+                    francisnganga238@gmail.com
                   </a>
                 </div>
               </div>
@@ -52,8 +53,8 @@ export default function ContactPage() {
                 <Phone className="h-6 w-6 text-accent mt-1" />
                 <div>
                   <h3 className="font-semibold">Phone</h3>
-                  <a href="tel:+1234567890" className="text-primary hover:underline">
-                    +1 (234) 567-890
+                  <a href="tel:+254116851585" className="text-primary hover:underline">
+                    +254 116 851585
                   </a>
                 </div>
               </div>

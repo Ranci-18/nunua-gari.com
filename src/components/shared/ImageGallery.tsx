@@ -12,12 +12,11 @@ interface ImageGalleryProps {
 }
 
 export function ImageGallery({ images, altTextPrefix }: ImageGalleryProps) {
-  const [selectedImage, setSelectedImage] = useState(images && images.length > 0 ? images[0] : 'https://placehold.co/800x600.png');
-  const effectiveImages = images && images.length > 0 ? images : ['https://placehold.co/800x600.png'];
+  const [selectedImage, setSelectedImage] = useState(images && images.length > 0 ? images[0] : 'https://placehold.co/1200x900.png');
+  const effectiveImages = images && images.length > 0 ? images : ['https://placehold.co/1200x900.png'];
 
 
   if (!effectiveImages || effectiveImages.length === 0) {
-    // This case should ideally not be hit if we provide a default above, but as a fallback:
     return (
       <Card className="overflow-hidden">
         <CardContent className="p-0">
@@ -40,9 +39,13 @@ export function ImageGallery({ images, altTextPrefix }: ImageGalleryProps) {
               layout="fill"
               objectFit="contain" 
               className="transition-opacity duration-300"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 66vw, 50vw"
+              // Adjust sizes: 100vw for smaller screens.
+              // For md screens up to 7xl container (1280px), it takes 2/3 width. 2/3 of 1280 is ~853px.
+              // 66vw for viewports between 768px and 1280px.
+              // Then a fixed larger size for viewports larger than the container.
+              sizes="(max-width: 767px) 100vw, (min-width: 768px) and (max-width: 1279px) 66vw, 850px"
               priority // Main image on a details page can be high priority
-              quality={85} // Slightly increase quality if blurriness is an issue, default is 75
+              quality={90} // Increased quality slightly
               data-ai-hint={selectedImage.includes('placehold.co') ? 'placeholder car detail' : 'car detail'}
             />
           </div>
@@ -64,7 +67,7 @@ export function ImageGallery({ images, altTextPrefix }: ImageGalleryProps) {
                 alt={`${altTextPrefix} - Thumbnail ${index + 1}`}
                 layout="fill"
                 objectFit="cover"
-                sizes="100px" // Provide a hint for thumbnail sizes
+                sizes="150px" // Thumbnails are relatively small
                 data-ai-hint={image.includes('placehold.co') ? 'placeholder car thumbnail' : 'car thumbnail'}
               />
             </button>

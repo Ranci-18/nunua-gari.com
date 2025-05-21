@@ -26,8 +26,11 @@ const nextConfig: NextConfig = {
     ],
   },
   experimental: {
-    serverComponentsExternalPackages: ['mongodb'], // Treat mongodb as external for RSCs
+ allowedDevOrigins: [
+      "https://9005-firebase-studio-1747811799289.cluster-c3a7z3wnwzapkx3rfr5kz62dac.cloudworkstations.dev",
+ ],
   },
+  
   webpack: (config, { isServer }) => {
     // Ensure resolve.alias exists and initialize if not
     config.resolve.alias = config.resolve.alias || {};
@@ -55,6 +58,7 @@ const nextConfig: NextConfig = {
       };
     }
 
+ serverExternalPackages: ['mongodb']
     return config;
   },
 };
