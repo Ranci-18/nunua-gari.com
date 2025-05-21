@@ -3,7 +3,7 @@ import { ImageGallery } from '@/components/shared/ImageGallery';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { CheckCircle, CalendarDays, Gauge, DollarSign, Wrench, Palette, CarIcon, Settings, Fuel } from 'lucide-react';
+import { CheckCircle, CalendarDays, Gauge, DollarSign, Wrench, Palette, CarIcon, Settings, Fuel, Tag } from 'lucide-react';
 
 interface CarDetailsDisplayProps {
   car: Car;
