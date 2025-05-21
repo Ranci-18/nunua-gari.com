@@ -20,7 +20,7 @@ export function ImageGallery({ images, altTextPrefix }: ImageGalleryProps) {
     return (
       <Card className="overflow-hidden">
         <CardContent className="p-0">
-          <div className="w-full bg-muted flex items-center justify-center" style={{aspectRatio: '4/3'}}> {/* Default aspect ratio for placeholder */}
+          <div className="w-full bg-muted flex items-center justify-center aspect-[4/3]">
             <p className="text-muted-foreground">No images available</p>
           </div>
         </CardContent>
@@ -31,22 +31,17 @@ export function ImageGallery({ images, altTextPrefix }: ImageGalleryProps) {
   return (
     <div className="grid gap-4">
       <Card className="overflow-hidden shadow-md">
-        <CardContent className="p-0">
-          {/* Main Image Display */}
-          <div className="relative w-full bg-muted/20">
-            <img
-              src={selectedImage}
-              alt={`${altTextPrefix} - Main View`}
-              className="block" // Ensures it behaves like a block element
-              style={{
-                width: '100%',        // Image will try to take full width of its parent div
-                maxWidth: '1066px',   // But will not exceed 1066px (or a suitable max for your design)
-                height: 'auto',       // Maintains aspect ratio
-                margin: '0 auto',     // Centers the image horizontally if maxWidth makes it narrower than its parent div
-              }}
-              data-ai-hint={selectedImage.includes('placehold.co') ? 'placeholder car detail' : 'car detail'}
-            />
-          </div>
+        <CardContent className="p-0 bg-muted/20"> {/* Moved background to CardContent */}
+          {/* Main Image Display - Simplified Structure */}
+          <img
+            src={selectedImage}
+            alt={`${altTextPrefix} - Main View`}
+            className="block w-full h-auto mx-auto" // Sizing and positioning classes directly on img
+            style={{ 
+              maxWidth: '1066px', // Cap at a reasonable max width, e.g., natural width of your example
+            }}
+            data-ai-hint={selectedImage.includes('placehold.co') ? 'placeholder car detail' : 'car detail'}
+          />
         </CardContent>
       </Card>
       {effectiveImages.length > 1 && (
@@ -66,7 +61,7 @@ export function ImageGallery({ images, altTextPrefix }: ImageGalleryProps) {
                 layout="fill"
                 objectFit="cover"
                 sizes="150px"
-                quality={75} // Thumbnails can be lower quality
+                quality={75} 
                 data-ai-hint={image.includes('placehold.co') ? 'placeholder car thumbnail' : 'car thumbnail'}
               />
             </button>
