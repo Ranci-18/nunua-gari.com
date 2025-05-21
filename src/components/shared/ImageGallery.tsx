@@ -13,10 +13,12 @@ interface ImageGalleryProps {
 
 export function ImageGallery({ images, altTextPrefix }: ImageGalleryProps) {
   const [selectedImage, setSelectedImage] = useState(images && images.length > 0 ? images[0] : 'https://placehold.co/1200x900.png');
+  // Ensure effectiveImages always has at least one placeholder if the input is empty
   const effectiveImages = images && images.length > 0 ? images : ['https://placehold.co/1200x900.png'];
 
 
   if (!effectiveImages || effectiveImages.length === 0) {
+    // This case should ideally not be hit if effectiveImages is correctly initialized with a placeholder
     return (
       <Card className="overflow-hidden">
         <CardContent className="p-0">
@@ -39,13 +41,12 @@ export function ImageGallery({ images, altTextPrefix }: ImageGalleryProps) {
               layout="fill"
               objectFit="cover" 
               className="transition-opacity duration-300"
-              // Adjust sizes: 100vw for smaller screens.
-              // For md screens up to 7xl container (1280px), it takes 2/3 width. 2/3 of 1280 is ~853px.
-              // 66vw for viewports between 768px and 1280px.
-              // Then a fixed larger size for viewports larger than the container.
-              sizes="(max-width: 767px) 100vw, (min-width: 768px) and (max-width: 1279px) 66vw, 850px"
+              // Refined sizes prop:
+              // - On screens up to 768px wide, image takes 100% of viewport width.
+              // - On screens wider than 768px, image takes 66% of viewport width (approximating 2/3 layout).
+              sizes="(max-width: 768px) 100vw, 66vw"
               priority // Main image on a details page can be high priority
-              quality={90} // Increased quality slightly
+              quality={95} // Increased quality further
               data-ai-hint={selectedImage.includes('placehold.co') ? 'placeholder car detail' : 'car detail'}
             />
           </div>
@@ -68,6 +69,7 @@ export function ImageGallery({ images, altTextPrefix }: ImageGalleryProps) {
                 layout="fill"
                 objectFit="cover"
                 sizes="150px" // Thumbnails are relatively small
+                quality={75} // Default quality for thumbnails is fine
                 data-ai-hint={image.includes('placehold.co') ? 'placeholder car thumbnail' : 'car thumbnail'}
               />
             </button>
@@ -77,4 +79,3 @@ export function ImageGallery({ images, altTextPrefix }: ImageGalleryProps) {
     </div>
   );
 }
-
