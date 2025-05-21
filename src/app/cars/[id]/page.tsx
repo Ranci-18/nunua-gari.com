@@ -19,13 +19,13 @@ export async function generateMetadata(
 
   if (!car) {
     return {
-      title: 'Car Not Found - AutoList',
+      title: 'Car Not Found - Premium Auto',
       description: 'The car you are looking for could not be found.',
     }
   }
 
   return {
-    title: `${car.year} ${car.make} ${car.model} - AutoList`,
+    title: `${car.year} ${car.make} ${car.model} - Premium Auto`,
     description: car.description.substring(0, 160) + '...',
     openGraph: {
       images: car.images.length > 0 ? [car.images[0]] : [],
@@ -50,7 +50,7 @@ export default async function CarDetailsPage({ params }: Props) {
   return (
     <Container className="py-8">
       <Button variant="outline" asChild className="mb-6">
-        <Link href="/" className="flex items-center gap-2">
+        <Link href="/listings" className="flex items-center gap-2">
           <ArrowLeft className="h-4 w-4" />
           Back to Listings
         </Link>

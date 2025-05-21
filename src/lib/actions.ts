@@ -11,7 +11,7 @@ import type { Car } from '@/types';
 // Simulate sending an email for contact form
 async function sendEmail(data: ContactFormData) {
   console.log('Simulating email sending:');
-  console.log('To: admin@autolist.com');
+  console.log('To: admin@premiumauto.com');
   console.log('Subject: New Contact Form Submission');
   console.log('Body:', data);
   // In a real app, you'd use an email service like SendGrid, Resend, etc.
@@ -68,6 +68,7 @@ export async function createCarAction(prevState: any, formData: FormData) {
     await addCar(validatedFields.data as Omit<Car, 'id' | 'createdAt' | 'updatedAt'>); // Type assertion might be needed if schema differs slightly from Car type.
     revalidatePath('/admin/cars');
     revalidatePath('/'); // Revalidate home page listings
+    revalidatePath('/listings'); // Revalidate listings page
     // redirect('/admin/cars'); // Cannot redirect here due to useFormState
     return { message: 'Car created successfully!', success: true, errors: {}, carId: null, redirectPath: '/admin/cars' };
 
@@ -103,6 +104,7 @@ export async function updateCarAction(id: string, prevState: any, formData: Form
     revalidatePath(`/admin/cars/edit/${id}`);
     revalidatePath(`/cars/${id}`); // Revalidate public car detail page
     revalidatePath('/'); // Revalidate home page listings
+    revalidatePath('/listings'); // Revalidate listings page
     // redirect(`/admin/cars/edit/${id}`); // Cannot redirect here due to useFormState
     return { message: 'Car updated successfully!', success: true, errors: {}, carId: id, redirectPath: `/admin/cars/edit/${id}` };
   } catch (error) {
@@ -121,6 +123,7 @@ export async function deleteCarAction(id: string) {
     await deleteCar(id);
     revalidatePath('/admin/cars');
     revalidatePath('/'); // Revalidate home page listings
+    revalidatePath('/listings'); // Revalidate listings page
     // Potentially revalidate individual car page if it still exists or redirect
     // For simplicity, we are not handling the case where a deleted car page is visited.
     // A real app might redirect or show a "deleted" message.

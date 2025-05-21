@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -11,11 +10,15 @@ import Link from 'next/link';
 import { ArrowLeft, AlertTriangle } from 'lucide-react';
 import { CarFilters, type FiltersState } from '@/components/cars/CarFilters';
 import { Skeleton } from '@/components/ui/skeleton';
+import type { Metadata } from 'next';
 
-// Metadata is typically handled by generateMetadata in Server Components
-// For Client Components, you might need a different approach if dynamic metadata based on fetched data is required.
-// For now, we'll keep it simple. Consider this if SEO for filtered states is critical.
-// export const metadata: Metadata = { ... }; 
+
+// For Client Components, document.title can be set in useEffect for dynamic titles.
+// Static metadata can be exported if needed, but won't be dynamic based on client-side data here.
+// export const metadata: Metadata = { 
+// title: 'Car Listings - Premium Auto',
+// description: 'Explore all available cars for sale at Premium Auto.'
+// }; 
 
 const initialFilters: FiltersState = {
   searchTerm: '',
@@ -34,6 +37,10 @@ export default function ListingsPage() {
   const [displayedCars, setDisplayedCars] = useState<Car[]>([]);
   const [filters, setFilters] = useState<FiltersState>(initialFilters);
   const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    document.title = 'Car Listings - Premium Auto';
+  }, []);
 
   useEffect(() => {
     async function loadCars() {

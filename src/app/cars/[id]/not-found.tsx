@@ -12,7 +12,7 @@ export default function CarNotFound() {
         Sorry, we couldn't find the car you're looking for. It might have been sold or the link is incorrect.
       </p>
       <Button asChild>
-        <Link href="/">Go Back to Listings</Link>
+        <Link href="/listings">Go Back to Listings</Link>
       </Button>
     </Container>
   );

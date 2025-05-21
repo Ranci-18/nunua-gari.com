@@ -4,8 +4,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Mail, Phone, MapPin } from 'lucide-react';
 
 export const metadata = {
-  title: 'Contact Us - AutoList',
-  description: 'Get in touch with AutoList for any inquiries or support.',
+  title: 'Contact Us - Premium Auto',
+  description: 'Get in touch with Premium Auto for any inquiries or support.',
 };
 
 export default function ContactPage() {
@@ -43,8 +43,8 @@ export default function ContactPage() {
                 <Mail className="h-6 w-6 text-accent mt-1" />
                 <div>
                   <h3 className="font-semibold">Email</h3>
-                  <a href="mailto:support@autolist.com" className="text-primary hover:underline">
-                    support@autolist.com
+                  <a href="mailto:support@premiumauto.com" className="text-primary hover:underline">
+                    support@premiumauto.com
                   </a>
                 </div>
               </div>

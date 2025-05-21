@@ -42,7 +42,7 @@ export default async function HomePage() {
             Your Journey To The Perfect Car Starts Here
           </h1>
           <p className="mt-6 text-lg sm:text-xl text-foreground max-w-3xl mx-auto">
-            Discover an exceptional selection of quality pre-owned vehicles. Transparent pricing, trusted service, and your dream car await at AutoList.
+            Discover an exceptional selection of quality pre-owned vehicles. Transparent pricing, trusted service, and your dream car await at Premium Auto.
           </p>
           <div className="mt-10">
             <Button size="lg" asChild className="shadow-lg hover:shadow-primary/30 transition-shadow">
@@ -76,7 +76,7 @@ export default async function HomePage() {
         <Container>
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold tracking-tight text-primary sm:text-4xl">
-              Why Choose AutoList?
+              Why Choose Premium Auto?
             </h2>
             <p className="mt-3 text-lg text-muted-foreground">
               Your trusted partner in finding the perfect vehicle.

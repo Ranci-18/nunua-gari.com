@@ -1,8 +1,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Car, PlusCircle, ListChecks, Settings } from "lucide-react"; // Added Settings here
-import { getCars } from "@/lib/data"; // Assuming this function exists
+import { Car, PlusCircle, ListChecks, Settings } from "lucide-react";
+import { getCars } from "@/lib/data";
 
 export default async function AdminDashboardPage() {
   const cars = await getCars();
@@ -14,7 +14,7 @@ export default async function AdminDashboardPage() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-primary">Admin Dashboard</h1>
-          <p className="text-muted-foreground">Welcome to the AutoList Admin Panel.</p>
+          <p className="text-muted-foreground">Welcome to the Premium Auto Admin Panel.</p>
         </div>
         <Button asChild>
           <Link href="/admin/cars/new" className="flex items-center gap-2">

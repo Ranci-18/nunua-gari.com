@@ -2,8 +2,8 @@ import { CarForm } from '@/components/cars/CarForm';
 import { createCarAction } from '@/lib/actions';
 
 export const metadata = {
-  title: 'Add New Car - Admin Panel',
-  description: 'Create a new car listing for AutoList.',
+  title: 'Add New Car - Admin Panel - Premium Auto',
+  description: 'Create a new car listing for Premium Auto.',
 };
 
 export default function NewCarPage() {

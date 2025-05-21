@@ -5,8 +5,8 @@ import Link from 'next/link';
 import { PlusCircle } from 'lucide-react';
 
 export const metadata = {
-  title: 'Manage Cars - Admin Panel',
-  description: 'View, edit, or delete car listings for AutoList.',
+  title: 'Manage Cars - Admin Panel - Premium Auto',
+  description: 'View, edit, or delete car listings for Premium Auto.',
 };
 
 export default async function AdminCarsPage() {

@@ -6,10 +6,10 @@ import { notFound } from 'next/navigation';
 export async function generateMetadata({ params }: { params: { id: string } }) {
   const car = await getCarById(params.id);
   if (!car) {
-    return { title: 'Car Not Found - Admin' };
+    return { title: 'Car Not Found - Admin - Premium Auto' };
   }
   return {
-    title: `Edit ${car.make} ${car.model} - Admin Panel`,
+    title: `Edit ${car.make} ${car.model} - Admin Panel - Premium Auto`,
     description: `Edit details for ${car.make} ${car.model}.`,
   };
 }
