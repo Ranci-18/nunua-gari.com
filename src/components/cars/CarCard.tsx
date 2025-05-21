@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Tag, CalendarDays, Gauge, DollarSign } from 'lucide-react';
+import { Tag, CalendarDays, Gauge } from 'lucide-react';
 
 interface CarCardProps {
   car: Car;
@@ -48,9 +48,8 @@ export function CarCard({ car }: CarCardProps) {
         </div>
       </CardContent>
       <CardFooter className="p-4 flex justify-between items-center border-t">
-        <p className="text-2xl font-bold text-primary flex items-center gap-1">
-          <DollarSign className="h-6 w-6" />
-          {car.price.toLocaleString()}
+        <p className="text-2xl font-bold text-primary">
+          Ksh {car.price.toLocaleString()}
         </p>
         <Button asChild>
           <Link href={`/cars/${car.id}`}>View Details</Link>

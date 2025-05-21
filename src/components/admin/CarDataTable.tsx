@@ -1,3 +1,4 @@
+
 'use client';
 
 import type { Car } from '@/types';
@@ -69,7 +70,7 @@ export function CarDataTable({ cars }: CarDataTableProps) {
               </TableCell>
               <TableCell className="font-medium">{car.make} {car.model}</TableCell>
               <TableCell>{car.year}</TableCell>
-              <TableCell className="text-right">${car.price.toLocaleString()}</TableCell>
+              <TableCell className="text-right">Ksh {car.price.toLocaleString()}</TableCell>
               <TableCell>{car.vin}</TableCell>
               <TableCell className="text-right">
                 <AlertDialog>

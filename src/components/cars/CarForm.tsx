@@ -120,7 +120,7 @@ export function CarForm({ car, action }: CarFormProps) {
         { name: "make", label: "Make", placeholder: "e.g., Toyota" },
         { name: "model", label: "Model", placeholder: "e.g., Camry" },
         { name: "year", label: "Year", type: "number", placeholder: "e.g., 2022" },
-        { name: "price", label: "Price ($)", type: "number", placeholder: "e.g., 25000" },
+        { name: "price", label: "Price (Ksh)", type: "number", placeholder: "e.g., 2500000" },
         { name: "mileage", label: "Mileage (mi)", type: "number", placeholder: "e.g., 15000" },
       ]
     },

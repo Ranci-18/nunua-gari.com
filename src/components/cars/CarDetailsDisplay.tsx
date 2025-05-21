@@ -3,7 +3,7 @@ import { ImageGallery } from '@/components/shared/ImageGallery';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { CheckCircle, CalendarDays, Gauge, DollarSign, Wrench, Palette, CarIcon, Settings, Fuel, Tag } from 'lucide-react';
+import { CheckCircle, CalendarDays, Gauge, Wrench, Palette, CarIcon, Settings, Fuel, TagIcon } from 'lucide-react'; // Changed Tag to TagIcon
 
 interface CarDetailsDisplayProps {
   car: Car;
@@ -33,14 +33,13 @@ export function CarDetailsDisplay({ car }: CarDetailsDisplayProps) {
             <p className="text-lg text-muted-foreground">{car.year}</p>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-extrabold text-accent flex items-center gap-2 mb-6">
-              <DollarSign className="h-8 w-8" />
-              {car.price.toLocaleString()}
+            <p className="text-3xl font-extrabold text-accent mb-6">
+              Ksh {car.price.toLocaleString()}
             </p>
             <div className="space-y-3">
               <DetailItem icon={<Gauge className="h-5 w-5" />} label="Mileage" value={`${car.mileage.toLocaleString()} mi`} />
               <DetailItem icon={<CalendarDays className="h-5 w-5" />} label="First Registered" value={new Date(car.createdAt).toLocaleDateString()} />
-              <DetailItem icon={<Tag className="h-5 w-5" />} label="VIN" value={car.vin} />
+              <DetailItem icon={<TagIcon className="h-5 w-5" />} label="VIN" value={car.vin} />
             </div>
           </CardContent>
         </Card>

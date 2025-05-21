@@ -178,7 +178,7 @@ export function CarFilters({ cars, filters, onFilterChange, onResetFilters }: Ca
           {/* Price Range */}
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <Label htmlFor="minPrice">Min Price ($)</Label>
+              <Label htmlFor="minPrice">Min Price (Ksh)</Label>
               <Input
                 id="minPrice"
                 type="number"
@@ -189,11 +189,11 @@ export function CarFilters({ cars, filters, onFilterChange, onResetFilters }: Ca
               />
             </div>
             <div>
-              <Label htmlFor="maxPrice">Max Price ($)</Label>
+              <Label htmlFor="maxPrice">Max Price (Ksh)</Label>
               <Input
                 id="maxPrice"
                 type="number"
-                placeholder="100000"
+                placeholder="10000000"
                 value={filters.maxPrice}
                 onChange={(e) => onFilterChange('maxPrice', e.target.value)}
                 min="0"
