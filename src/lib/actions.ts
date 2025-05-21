@@ -11,13 +11,51 @@ import type { Car } from '@/types';
 
 // Simulate sending an email for contact form
 async function sendEmail(data: ContactFormData) {
-  console.log('Simulating email sending:');
-  console.log('To: admin@premiumauto.com');
-  console.log('Subject: New Contact Form Submission');
-  console.log('Body:', data);
-  // In a real app, you'd use an email service like SendGrid, Resend, etc.
-  await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network delay
-  return { success: true, message: "Email sent successfully (simulated)." };
+  console.log('--- New Contact Form Submission ---');
+  console.log(`Intended Recipient: francisnganga238@gmail.com`);
+  console.log(`Subject: New Contact Form Submission from Premium Auto`);
+  console.log('Sender Name:', data.name);
+  console.log('Sender Email:', data.email);
+  console.log('Sender Phone:', data.phone || 'Not provided');
+  console.log('Preferred Contact:', data.preferredContactMethod);
+  console.log('Message:', data.message);
+  console.log('------------------------------------');
+
+  // IMPORTANT: To send actual emails, you need to integrate an email service.
+  // 1. Choose a service (e.g., Resend, SendGrid, AWS SES).
+  // 2. Install their SDK (e.g., `npm install resend`).
+  // 3. Get an API Key and set it as an environment variable (e.g., RESEND_API_KEY).
+  // 4. Replace the simulation below with actual email sending code.
+
+  // Example placeholder for Resend integration:
+  /*
+  if (process.env.RESEND_API_KEY) {
+    try {
+      // const { Resend } = await import('resend'); // Assumes 'resend' is installed
+      // const resend = new Resend(process.env.RESEND_API_KEY);
+      // await resend.emails.send({
+      //   from: 'Premium Auto Contact <noreply@yourdomain.com>', // Replace with your sending domain
+      //   to: 'francisnganga238@gmail.com',
+      //   subject: `New Contact from ${data.name} - Premium Auto`,
+      //   html: `<p>Name: ${data.name}</p>
+      //          <p>Email: ${data.email}</p>
+      //          <p>Phone: ${data.phone || 'N/A'}</p>
+      //          <p>Preferred Contact: ${data.preferredContactMethod}</p>
+      //          <p>Message: ${data.message}</p>`,
+      // });
+      // return { success: true, message: "Message sent successfully!" };
+    } catch (emailError) {
+      // console.error("Email sending error:", emailError);
+      // return { success: false, message: "Failed to send message via email service."};
+    }
+  }
+  */
+
+  // Fallback to simulation if no email service is configured
+  await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
+  const simulationMessage = "Message logged to server console (simulation). Integrate an email service for actual delivery.";
+  console.log(simulationMessage);
+  return { success: true, message: simulationMessage };
 }
 
 export async function handleContactForm(prevState: any, formData: FormData) {
@@ -33,12 +71,14 @@ export async function handleContactForm(prevState: any, formData: FormData) {
   }
 
   try {
-    // Here you would typically send an email or save to a database
     const emailResult = await sendEmail(validatedFields.data);
-    if (emailResult.success) {
+    if (emailResult.success && emailResult.message.startsWith("Message sent successfully!")) { // Check for actual success message
       return { message: 'Thank you for your message! We will get back to you soon.', success: true, errors: {} };
-    } else {
-      return { message: 'Failed to send message. Please try again later.', success: false, errors: {} };
+    } else if (emailResult.success) { // This means it was simulated
+        return { message: emailResult.message, success: true, errors: {} };
+    }
+     else {
+      return { message: emailResult.message || 'Failed to send message. Please try again later.', success: false, errors: {} };
     }
   } catch (error) {
     console.error('Contact form submission error:', error);
@@ -146,7 +186,7 @@ export async function updateCarAction(id: string, prevState: any, formData: Form
   const validatedFields = carSchema.safeParse(processedFormData);
 
   if (!validatedFields.success) {
-    console.log("Validation Errors (Update):", validatedFields.error.flatten().fieldErrors);
+     console.log("Validation Errors (Update):", validatedFields.error.flatten().fieldErrors);
     return {
       errors: validatedFields.error.flatten().fieldErrors,
       message: 'Validation failed. Please check the car details.',
@@ -155,15 +195,15 @@ export async function updateCarAction(id: string, prevState: any, formData: Form
   }
 
   try {
-    const updated = await updateCar(id, validatedFields.data);
-    if (!updated) {
-      return { message: 'Car not found or failed to update.', success: false, errors: {} };
+    const updatedCar = await updateCar(id, validatedFields.data as Partial<Omit<Car, 'id' | 'createdAt' | 'updatedAt'>>);
+    if (!updatedCar) {
+      return { message: 'Failed to update car. Car not found.', success: false, errors: {} };
     }
     revalidatePath('/admin/cars');
     revalidatePath(`/admin/cars/edit/${id}`);
-    revalidatePath(`/cars/${id}`); 
+    revalidatePath(`/cars/${id}`);
     revalidatePath('/'); 
-    revalidatePath('/listings'); 
+    revalidatePath('/listings');
     return { message: 'Car updated successfully!', success: true, errors: {}, carId: id, redirectPath: `/admin/cars/edit/${id}` };
   } catch (error) {
     console.error('Update car error:', error);
@@ -171,20 +211,18 @@ export async function updateCarAction(id: string, prevState: any, formData: Form
   }
 }
 
-export async function deleteCarAction(id: string) {
+export async function deleteCarAction(id: string): Promise<{ success: boolean; message: string }> {
   try {
-    const carToDelete = await getCarById(id);
-    if (!carToDelete) {
-      return { success: false, message: 'Car not found.' };
+    const success = await deleteCar(id);
+    if (success) {
+      revalidatePath('/admin/cars');
+      revalidatePath('/');
+      revalidatePath('/listings');
+      return { success: true, message: 'Car deleted successfully.' };
     }
-
-    await deleteCar(id);
-    revalidatePath('/admin/cars');
-    revalidatePath('/'); 
-    revalidatePath('/listings'); 
-    return { success: true, message: 'Car deleted successfully.' };
+    return { success: false, message: 'Failed to delete car. Car not found.' };
   } catch (error) {
     console.error('Delete car error:', error);
-    return { success: false, message: 'Failed to delete car. Please try again.' };
+    return { success: false, message: 'Failed to delete car. An unexpected error occurred.' };
   }
 }
