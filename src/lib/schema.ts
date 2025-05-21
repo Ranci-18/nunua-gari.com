@@ -27,12 +27,17 @@ export type CarFormData = z.infer<typeof carSchema>;
 
 
 export const contactSchema = z.object({
- name: z.string().min(1, { message: "Name is required." }),
- email: z.string().email({ message: "Please enter a valid email address." }).optional().or(z.literal('')),
-  phone: z.string()
-    .min(1, { message: "Phone number is required."})
+  name: z.string().min(1, { message: "Name is required." }),
+  email: z.preprocess(
+    // If the input is an empty string or only whitespace, treat it as undefined
+    (val) => (typeof val === 'string' && val.trim() === '' ? undefined : val),
+    // Then, apply the email validation which is optional
+    z.string().email({ message: "Please enter a valid email address." }).optional()
+  ),
+  phone: z.string() // Phone is required
+    .min(1, { message: "Phone number is required."}) // Check raw input isn't empty
     .transform(val => val.replace(/[\s()-]/g, '')) // Remove spaces, parentheses, hyphens
-    .refine(val => /^\+?\d{7,15}$/.test(val), { // Allows optional +, then 7-15 digits
+    .refine(val => val.length === 0 || /^\+?\d{7,15}$/.test(val), { // Allow empty string post-transform (should not happen if min(1) is on raw) OR valid format
       message: "Please enter a valid phone number (e.g., +254712345678 or 0712345678).",
     }),
   preferredContactMethod: z.enum(['email', 'phone'], { required_error: "Please select a preferred contact method."}),
@@ -40,11 +45,12 @@ export const contactSchema = z.object({
 });
 
 export type ContactFormData = z.infer<typeof contactSchema>;
+
+// This type is used for database storage and what `addContactMessage` expects
 export type ContactFormDataForDb = {
   name: string;
-  email?: string; // Email is now optional
-  phone: string; // Phone is now required
+  email?: string; // Email is optional for DB
+  phone: string;   // Phone is required for DB
   preferredContactMethod: 'email' | 'phone';
   message: string;
 };
-
