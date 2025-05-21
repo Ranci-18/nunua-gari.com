@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useActionState } from 'react'; // Changed from 'react-dom' and renamed
+import { useActionState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { contactSchema, type ContactFormData } from '@/lib/schema';
@@ -9,12 +9,10 @@ import { handleContactForm } from '@/lib/actions';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -31,7 +29,7 @@ const initialState = {
 };
 
 export function ContactForm() {
-  const [state, formAction] = useActionState(handleContactForm, initialState); // Renamed here
+  const [state, formAction] = useActionState(handleContactForm, initialState);
   const { toast } = useToast();
 
   const form = useForm<ContactFormData>({
@@ -52,13 +50,7 @@ export function ContactForm() {
         description: state.message,
       });
       form.reset();
-    } else if (state.message && Object.keys(state.errors || {}).length > 0) {
-       toast({
-        title: "Error",
-        description: state.message,
-        variant: "destructive",
-      });
-    } else if (state.message && !state.success && Object.keys(state.errors || {}).length === 0) {
+    } else if (state.message && (Object.keys(state.errors || {}).length > 0 || !state.success)) {
        toast({
         title: "Error",
         description: state.message,
@@ -88,7 +80,7 @@ export function ContactForm() {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="flex items-center gap-2"><Mail className="h-4 w-4 text-accent" />Email Address</FormLabel>
+              <FormLabel className="flex items-center gap-2"><Mail className="h-4 w-4 text-accent" />Email Address (Optional)</FormLabel>
               <FormControl>
                 <Input type="email" placeholder="john.doe@example.com" {...field} />
               </FormControl>
@@ -101,9 +93,9 @@ export function ContactForm() {
           name="phone"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="flex items-center gap-2"><Phone className="h-4 w-4 text-accent" />Phone Number (Optional)</FormLabel>
+              <FormLabel className="flex items-center gap-2"><Phone className="h-4 w-4 text-accent" />Phone Number</FormLabel>
               <FormControl>
-                <Input type="tel" placeholder="+1234567890" {...field} />
+                <Input type="tel" placeholder="+254 712 345 678" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

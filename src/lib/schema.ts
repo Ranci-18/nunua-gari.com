@@ -27,24 +27,24 @@ export type CarFormData = z.infer<typeof carSchema>;
 
 
 export const contactSchema = z.object({
-  name: z.string().min(1, { message: "Name is required." }),
-  email: z.string().email({ message: "Invalid email address." }),
+ name: z.string().min(1, { message: "Name is required." }),
+ email: z.string().email({ message: "Please enter a valid email address." }).optional().or(z.literal('')),
   phone: z.string()
-    .optional() // Makes the field itself optional (can be undefined)
-    .refine(val => {
-      // If val is undefined (field not submitted) or an empty string (or only whitespace), it's valid.
-      if (val === undefined || val.trim() === '') {
-        return true;
-      }
-      // If there's content, validate it.
-      const phoneNumberWithoutSpaces = val.replace(/\s+/g, '');
-      return /^\+?[1-9]\d{1,14}$/.test(phoneNumberWithoutSpaces);
-    }, {
-      message: "Invalid phone number format. If provided, it should start with '+' and country code. Spaces are allowed."
+    .min(1, { message: "Phone number is required."})
+    .transform(val => val.replace(/[\s()-]/g, '')) // Remove spaces, parentheses, hyphens
+    .refine(val => /^\+?\d{7,15}$/.test(val), { // Allows optional +, then 7-15 digits
+      message: "Please enter a valid phone number (e.g., +254712345678 or 0712345678).",
     }),
   preferredContactMethod: z.enum(['email', 'phone'], { required_error: "Please select a preferred contact method."}),
   message: z.string().min(1, { message: "Message is required." }),
 });
 
 export type ContactFormData = z.infer<typeof contactSchema>;
-export type ContactFormDataForDb = Omit<ContactFormData, 'phone'> & { phone?: string };
+export type ContactFormDataForDb = {
+  name: string;
+  email?: string; // Email is now optional
+  phone: string; // Phone is now required
+  preferredContactMethod: 'email' | 'phone';
+  message: string;
+};
+

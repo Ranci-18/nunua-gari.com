@@ -21,8 +21,8 @@ export interface Car {
 
 export interface ContactFormDataForDb {
   name: string;
-  email: string;
-  phone?: string;
+  email?: string; // Email is optional
+  phone: string;   // Phone is required
   preferredContactMethod: 'email' | 'phone';
   message: string;
 }
