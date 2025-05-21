@@ -10,7 +10,7 @@ export const carSchema = z.object({
   description: z.string().min(10, { message: "Description must be at least 10 characters." }),
   images: z.array(z.string().url({ message: "Each image must be a valid URL." })).min(1, { message: "At least one image is required."}).max(5, { message: "Maximum 5 images allowed."}),
   features: z.array(z.string().min(1)).optional().default([]),
-  engine: z.string().min(2, { message: "Engine details are required." }),
+  engine: z.string().min(1, { message: "Engine details must be at least 1 character." }),
   transmission: z.string().min(2, { message: "Transmission type is required." }),
   fuelType: z.string().min(2, { message: "Fuel type is required." }),
   exteriorColor: z.string().min(2, { message: "Exterior color is required." }),

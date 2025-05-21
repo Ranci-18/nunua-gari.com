@@ -12,12 +12,12 @@ let cars: Car[] = [
     description: 'A reliable and fuel-efficient sedan, perfect for families and commuters. Well-maintained with low mileage.',
     images: ['https://placehold.co/600x400.png', 'https://placehold.co/600x400.png', 'https://placehold.co/600x400.png'],
     features: ['Bluetooth', 'Backup Camera', 'Lane Assist', 'Apple CarPlay'],
-    engine: '2.5L 4-Cylinder',
-    transmission: 'Automatic', // Changed from 8-Speed Automatic for simplicity in filters
+    engine: '2.5L', // Simplified
+    transmission: 'Automatic',
     fuelType: 'Gasoline',
     exteriorColor: 'Silver',
     interiorColor: 'Black',
-    vin: '1ABC123XYZ7890000',
+    vin: '1ABC123XYZ7890001',
     createdAt: new Date('2023-01-15T09:00:00Z'),
     updatedAt: new Date('2023-05-20T14:30:00Z'),
   },
@@ -31,12 +31,12 @@ let cars: Car[] = [
     description: 'Spacious and versatile SUV with all-wheel drive. Great for adventures and daily driving.',
     images: ['https://placehold.co/600x400.png', 'https://placehold.co/600x400.png', 'https://placehold.co/600x400.png'],
     features: ['Sunroof', 'Heated Seats', 'AWD', 'Android Auto'],
-    engine: '1.5L Turbocharged 4-Cylinder',
+    engine: '1.5L Turbo', // Simplified
     transmission: 'CVT',
     fuelType: 'Gasoline',
     exteriorColor: 'Red',
     interiorColor: 'Gray',
-    vin: '2DEF456UVW4560000',
+    vin: '2DEF456UVW4560002',
     createdAt: new Date('2023-02-10T11:00:00Z'),
     updatedAt: new Date('2023-06-01T10:00:00Z'),
   },
@@ -50,12 +50,12 @@ let cars: Car[] = [
     description: 'Powerful and rugged pickup truck. Ready for work or play, with impressive towing capacity.',
     images: ['https://placehold.co/600x400.png', 'https://placehold.co/600x400.png', 'https://placehold.co/600x400.png'],
     features: ['Towing Package', '4x4', 'Touchscreen Display', 'Bed Liner'],
-    engine: '3.5L V6 EcoBoost',
-    transmission: 'Automatic', // Changed from 10-Speed Automatic
+    engine: '3.5L V6', // Simplified
+    transmission: 'Automatic',
     fuelType: 'Gasoline',
     exteriorColor: 'Blue',
     interiorColor: 'Tan',
-    vin: '3GHI789RST1230000',
+    vin: '3GHI789RST1230003',
     createdAt: new Date('2022-12-01T15:00:00Z'),
     updatedAt: new Date('2023-04-10T09:15:00Z'),
   },
@@ -69,12 +69,12 @@ let cars: Car[] = [
     description: 'Luxury sport sedan with dynamic performance and premium features. Almost new condition.',
     images: ['https://placehold.co/600x400.png', 'https://placehold.co/600x400.png', 'https://placehold.co/600x400.png'],
     features: ['Leather Seats', 'Navigation System', 'Harman Kardon Sound', 'Parking Sensors'],
-    engine: '2.0L TwinPower Turbo I4',
-    transmission: 'Automatic', // Changed from 8-Speed Sport Automatic
+    engine: '2.0L Turbo', // Simplified
+    transmission: 'Automatic',
     fuelType: 'Gasoline',
     exteriorColor: 'Black Sapphire Metallic',
     interiorColor: 'Cognac Vernasca Leather',
-    vin: '4JKL012PQR7890000',
+    vin: '4JKL012PQR7890004',
     createdAt: new Date('2023-08-15T10:00:00Z'),
     updatedAt: new Date('2023-09-01T16:20:00Z'),
   },
@@ -88,12 +88,12 @@ let cars: Car[] = [
     description: 'Cutting-edge electric sedan with impressive range and Autopilot features.',
     images: ['https://placehold.co/600x400.png', 'https://placehold.co/600x400.png', 'https://placehold.co/600x400.png'],
     features: ['Autopilot', 'Premium Interior', ' panoramic Glass Roof', '15-inch Touchscreen'],
-    engine: 'Dual Motor All-Wheel Drive',
-    transmission: 'Automatic', // Electric cars are typically single-speed automatic
+    engine: 'Electric Motor', // Simplified
+    transmission: 'Automatic',
     fuelType: 'Electric',
     exteriorColor: 'Pearl White Multi-Coat',
     interiorColor: 'All Black',
-    vin: '5YJSA1CN0FL00000',
+    vin: '5YJSA1CN0FL000005',
     createdAt: new Date('2023-07-20T14:00:00Z'),
     updatedAt: new Date('2023-09-10T11:00:00Z'),
   },
@@ -107,12 +107,12 @@ let cars: Car[] = [
     description: 'Fuel-efficient diesel hatchback, known for its reliability and practicality.',
     images: ['https://placehold.co/600x400.png', 'https://placehold.co/600x400.png', 'https://placehold.co/600x400.png'],
     features: ['Apple CarPlay', 'Android Auto', 'Blind Spot Monitor', 'Adaptive Cruise Control'],
-    engine: '2.0L TDI Diesel',
-    transmission: 'Automatic', // DSG Automatic
+    engine: '2.0L TDI', // Simplified
+    transmission: 'Automatic',
     fuelType: 'Diesel',
     exteriorColor: 'Dark Blue',
     interiorColor: 'Titan Black Cloth',
-    vin: 'WVWZZZAUZMP00000',
+    vin: 'WVWZZZAUZMP000006',
     createdAt: new Date('2023-03-05T09:30:00Z'),
     updatedAt: new Date('2023-08-25T15:00:00Z'),
   },
@@ -126,12 +126,12 @@ let cars: Car[] = [
     description: 'Iconic roadster that offers pure driving fun with its manual transmission and agile handling.',
     images: ['https://placehold.co/600x400.png', 'https://placehold.co/600x400.png', 'https://placehold.co/600x400.png'],
     features: ['Convertible Soft Top', 'Bose Audio System', 'Limited-Slip Differential', 'Sport-Tuned Suspension'],
-    engine: '2.0L Skyactiv-G 4-Cylinder',
+    engine: '2.0L SkyActiv', // Simplified
     transmission: 'Manual',
     fuelType: 'Gasoline',
     exteriorColor: 'Soul Red Crystal Metallic',
     interiorColor: 'Black Leather',
-    vin: 'JM1ND0EGXN000000',
+    vin: 'JM1ND0EGXN0000007',
     createdAt: new Date('2023-06-10T16:00:00Z'),
     updatedAt: new Date('2023-09-05T10:45:00Z'),
   },
@@ -145,12 +145,12 @@ let cars: Car[] = [
     description: 'Dependable all-wheel-drive wagon, perfect for all weather conditions and outdoor activities.',
     images: ['https://placehold.co/600x400.png', 'https://placehold.co/600x400.png', 'https://placehold.co/600x400.png'],
     features: ['Symmetrical AWD', 'EyeSight Driver Assist', 'Roof Rails', 'Heated Seats'],
-    engine: '2.5L Boxer Engine',
-    transmission: 'CVT', // Lineartronic CVT
+    engine: '2.5L Boxer', // Simplified
+    transmission: 'CVT',
     fuelType: 'Gasoline',
     exteriorColor: 'Green',
     interiorColor: 'Gray Cloth',
-    vin: '4S4BSBFD0L300000',
+    vin: '4S4BSBFD0L3000008',
     createdAt: new Date('2022-11-01T12:00:00Z'),
     updatedAt: new Date('2023-07-15T08:30:00Z'),
   }
@@ -203,5 +203,3 @@ export async function deleteCar(id: string): Promise<boolean> {
   cars = cars.filter(car => car.id !== id);
   return cars.length < initialLength;
 }
-
-    
