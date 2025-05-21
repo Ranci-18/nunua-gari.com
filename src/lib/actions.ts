@@ -7,14 +7,23 @@ import { redirect } from 'next/navigation';
 import { carSchema, contactSchema } from './schema';
 import type { CarFormData, ContactFormData } from './schema';
 import { addCar, updateCar, deleteCar, getCarById, addContactMessage, markContactMessageReadStatus, deleteContactMessage } from './data';
-import type { Car, ContactFormDataForDb } from '@/types';
+import type { Car, ContactFormDataForDb, ContactMessageDb } from '@/types';
 
 
 export async function handleContactForm(prevState: any, formData: FormData) {
   const rawFormData = Object.fromEntries(formData.entries());
 
   // Log the raw form data received by the server action
-  console.log("Contact Form - Raw Data Received:", JSON.stringify(rawFormData, null, 2));
+  console.log("Contact Form - Raw Data Received by Server Action:", JSON.stringify(rawFormData, null, 2));
+
+  // Log each field individually as strings, which is what Zod will parse
+  console.log("--- Individual Field Values for Zod Validation ---");
+  console.log("Name from form:", rawFormData.name);
+  console.log("Email from form:", rawFormData.email);
+  console.log("Phone from form:", rawFormData.phone);
+  console.log("Preferred Contact Method from form:", rawFormData.preferredContactMethod);
+  console.log("Message from form:", rawFormData.message);
+  console.log("--------------------------------------------------");
 
   const validatedFields = contactSchema.safeParse(rawFormData);
 
@@ -29,19 +38,18 @@ export async function handleContactForm(prevState: any, formData: FormData) {
   }
 
   try {
-    // The data is valid, proceed to save it
     const dataForDb: ContactFormDataForDb = {
       name: validatedFields.data.name,
-      phone: validatedFields.data.phone, // Phone is required by schema
+      phone: validatedFields.data.phone,
       preferredContactMethod: validatedFields.data.preferredContactMethod,
       message: validatedFields.data.message,
     };
-    if (validatedFields.data.email) { // Add email only if it exists
+    if (validatedFields.data.email) { 
       dataForDb.email = validatedFields.data.email;
     }
 
     await addContactMessage(dataForDb);
-    revalidatePath('/admin/messages'); // Revalidate admin messages page
+    revalidatePath('/admin/messages'); 
     return { message: 'Thank you for your message! We have received it and will get back to you soon.', success: true, errors: {} };
 
   } catch (error) {
@@ -56,7 +64,7 @@ function extractArrayFromFormData(formData: FormData, baseName: string): string[
   let i = 0;
   while (true) {
     const value = formData.get(`${baseName}.${i}`);
-    if (value === null) { // formData.get returns null if key doesn't exist, indicating end of array
+    if (value === null) { 
       break;
     }
     if (typeof value === 'string') {
