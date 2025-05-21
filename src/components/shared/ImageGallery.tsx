@@ -35,11 +35,11 @@ export function ImageGallery({ images, altTextPrefix }: ImageGalleryProps) {
         <CardContent className="p-0">
           {/* Main Image Display */}
           <div className="aspect-video relative w-full">
-            {/* Replaced next/image with standard img tag */}
             <img
               src={selectedImage}
               alt={`${altTextPrefix} - Main View`}
               className="absolute h-full w-full object-cover transition-opacity duration-300"
+              style={{ imageRendering: 'crisp-edges' }}
               data-ai-hint={selectedImage.includes('placehold.co') ? 'placeholder car detail' : 'car detail'}
             />
           </div>
