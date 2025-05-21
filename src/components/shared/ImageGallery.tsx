@@ -18,7 +18,6 @@ export function ImageGallery({ images, altTextPrefix }: ImageGalleryProps) {
 
 
   if (!effectiveImages || effectiveImages.length === 0) {
-    // This case should ideally not be hit if effectiveImages is correctly initialized with a placeholder
     return (
       <Card className="overflow-hidden">
         <CardContent className="p-0">
@@ -34,19 +33,13 @@ export function ImageGallery({ images, altTextPrefix }: ImageGalleryProps) {
     <div className="grid gap-4">
       <Card className="overflow-hidden shadow-md">
         <CardContent className="p-0">
+          {/* Main Image Display */}
           <div className="aspect-video relative w-full">
-            <Image
+            {/* Replaced next/image with standard img tag */}
+            <img
               src={selectedImage}
               alt={`${altTextPrefix} - Main View`}
-              layout="fill"
-              objectFit="cover" 
-              className="transition-opacity duration-300"
-              // Refined sizes prop:
-              // - On screens up to 768px wide, image takes 100% of viewport width.
-              // - On screens wider than 768px, image takes 66% of viewport width (approximating 2/3 layout).
-              sizes="(max-width: 768px) 100vw, 66vw"
-              priority // Main image on a details page can be high priority
-              quality={95} // Increased quality further
+              className="absolute h-full w-full object-cover transition-opacity duration-300"
               data-ai-hint={selectedImage.includes('placehold.co') ? 'placeholder car detail' : 'car detail'}
             />
           </div>
