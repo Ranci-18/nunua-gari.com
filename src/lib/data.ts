@@ -12,7 +12,7 @@ let cars: Car[] = [
     description: 'A reliable and fuel-efficient sedan, perfect for families and commuters. Well-maintained with low mileage.',
     images: ['https://placehold.co/600x400.png', 'https://placehold.co/600x400.png', 'https://placehold.co/600x400.png'],
     features: ['Bluetooth', 'Backup Camera', 'Lane Assist', 'Apple CarPlay'],
-    engine: '2.5L', // Simplified
+    engine: '2.5L',
     transmission: 'Automatic',
     fuelType: 'Gasoline',
     exteriorColor: 'Silver',
@@ -31,7 +31,7 @@ let cars: Car[] = [
     description: 'Spacious and versatile SUV with all-wheel drive. Great for adventures and daily driving.',
     images: ['https://placehold.co/600x400.png', 'https://placehold.co/600x400.png', 'https://placehold.co/600x400.png'],
     features: ['Sunroof', 'Heated Seats', 'AWD', 'Android Auto'],
-    engine: '1.5L Turbo', // Simplified
+    engine: '1.5L Turbo',
     transmission: 'CVT',
     fuelType: 'Gasoline',
     exteriorColor: 'Red',
@@ -50,7 +50,7 @@ let cars: Car[] = [
     description: 'Powerful and rugged pickup truck. Ready for work or play, with impressive towing capacity.',
     images: ['https://placehold.co/600x400.png', 'https://placehold.co/600x400.png', 'https://placehold.co/600x400.png'],
     features: ['Towing Package', '4x4', 'Touchscreen Display', 'Bed Liner'],
-    engine: '3.5L V6', // Simplified
+    engine: '3.5L V6',
     transmission: 'Automatic',
     fuelType: 'Gasoline',
     exteriorColor: 'Blue',
@@ -69,7 +69,7 @@ let cars: Car[] = [
     description: 'Luxury sport sedan with dynamic performance and premium features. Almost new condition.',
     images: ['https://placehold.co/600x400.png', 'https://placehold.co/600x400.png', 'https://placehold.co/600x400.png'],
     features: ['Leather Seats', 'Navigation System', 'Harman Kardon Sound', 'Parking Sensors'],
-    engine: '2.0L Turbo', // Simplified
+    engine: '2.0L Turbo',
     transmission: 'Automatic',
     fuelType: 'Gasoline',
     exteriorColor: 'Black Sapphire Metallic',
@@ -87,8 +87,8 @@ let cars: Car[] = [
     mileage: 10000,
     description: 'Cutting-edge electric sedan with impressive range and Autopilot features.',
     images: ['https://placehold.co/600x400.png', 'https://placehold.co/600x400.png', 'https://placehold.co/600x400.png'],
-    features: ['Autopilot', 'Premium Interior', ' panoramic Glass Roof', '15-inch Touchscreen'],
-    engine: 'Electric Motor', // Simplified
+    features: ['Autopilot', 'Premium Interior', 'Panoramic Glass Roof', '15-inch Touchscreen'],
+    engine: 'Electric Motor',
     transmission: 'Automatic',
     fuelType: 'Electric',
     exteriorColor: 'Pearl White Multi-Coat',
@@ -107,7 +107,7 @@ let cars: Car[] = [
     description: 'Fuel-efficient diesel hatchback, known for its reliability and practicality.',
     images: ['https://placehold.co/600x400.png', 'https://placehold.co/600x400.png', 'https://placehold.co/600x400.png'],
     features: ['Apple CarPlay', 'Android Auto', 'Blind Spot Monitor', 'Adaptive Cruise Control'],
-    engine: '2.0L TDI', // Simplified
+    engine: '2.0L TDI',
     transmission: 'Automatic',
     fuelType: 'Diesel',
     exteriorColor: 'Dark Blue',
@@ -126,7 +126,7 @@ let cars: Car[] = [
     description: 'Iconic roadster that offers pure driving fun with its manual transmission and agile handling.',
     images: ['https://placehold.co/600x400.png', 'https://placehold.co/600x400.png', 'https://placehold.co/600x400.png'],
     features: ['Convertible Soft Top', 'Bose Audio System', 'Limited-Slip Differential', 'Sport-Tuned Suspension'],
-    engine: '2.0L SkyActiv', // Simplified
+    engine: '2.0L SkyActiv',
     transmission: 'Manual',
     fuelType: 'Gasoline',
     exteriorColor: 'Soul Red Crystal Metallic',
@@ -145,7 +145,7 @@ let cars: Car[] = [
     description: 'Dependable all-wheel-drive wagon, perfect for all weather conditions and outdoor activities.',
     images: ['https://placehold.co/600x400.png', 'https://placehold.co/600x400.png', 'https://placehold.co/600x400.png'],
     features: ['Symmetrical AWD', 'EyeSight Driver Assist', 'Roof Rails', 'Heated Seats'],
-    engine: '2.5L Boxer', // Simplified
+    engine: '2.5L Boxer',
     transmission: 'CVT',
     fuelType: 'Gasoline',
     exteriorColor: 'Green',
@@ -153,6 +153,29 @@ let cars: Car[] = [
     vin: '4S4BSBFD0L3000008',
     createdAt: new Date('2022-11-01T12:00:00Z'),
     updatedAt: new Date('2023-07-15T08:30:00Z'),
+  },
+  {
+    id: '9',
+    make: 'Toyota',
+    model: 'Hilux',
+    year: 2025,
+    price: 1000000,
+    mileage: 10000,
+    description: 'Powerful diesel truck, ready for any adventure or work task.',
+    images: [
+      'https://placehold.co/600x400.png',
+      'https://placehold.co/600x400.png',
+      'https://placehold.co/600x400.png',
+    ],
+    features: ['4x4 Capability', 'Tow Hitch Assembly'],
+    engine: '2.5L Diesel',
+    transmission: 'Manual',
+    fuelType: 'Diesel',
+    exteriorColor: 'Grey',
+    interiorColor: 'Black',
+    vin: 'DUMMYVINHILUX0009',
+    createdAt: new Date('2024-03-10T10:00:00Z'),
+    updatedAt: new Date('2024-03-10T10:00:00Z'),
   }
 ];
 
@@ -203,3 +226,4 @@ export async function deleteCar(id: string): Promise<boolean> {
   cars = cars.filter(car => car.id !== id);
   return cars.length < initialLength;
 }
+
