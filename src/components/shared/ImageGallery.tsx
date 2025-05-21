@@ -30,20 +30,25 @@ export function ImageGallery({ images, altTextPrefix }: ImageGalleryProps) {
 
   return (
     <div className="grid gap-4">
+      {/* Main Image Display */}
       <Card className="overflow-hidden shadow-md">
-        <CardContent className="p-0 bg-muted/20"> {/* Moved background to CardContent */}
-          {/* Main Image Display - Simplified Structure */}
+        <CardContent className="p-0 bg-muted/20"> {/* Ensure no padding */}
           <img
             src={selectedImage}
             alt={`${altTextPrefix} - Main View`}
-            className="block w-full h-auto mx-auto" // Sizing and positioning classes directly on img
-            style={{ 
-              maxWidth: '1066px', // Cap at a reasonable max width, e.g., natural width of your example
+            className="block mx-auto" // display: block and margin: auto for centering
+            style={{
+              width: 'auto',          // Let the image use its natural width
+              maxWidth: '100%',       // But don't let it overflow its container
+              height: 'auto',         // Maintain aspect ratio
+              maxHeight: '75vh',      // Prevent image from being excessively tall (adjust as needed)
             }}
             data-ai-hint={selectedImage.includes('placehold.co') ? 'placeholder car detail' : 'car detail'}
           />
         </CardContent>
       </Card>
+
+      {/* Thumbnail Grid */}
       {effectiveImages.length > 1 && (
         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
           {effectiveImages.map((image, index) => (
@@ -58,10 +63,11 @@ export function ImageGallery({ images, altTextPrefix }: ImageGalleryProps) {
               <Image
                 src={image}
                 alt={`${altTextPrefix} - Thumbnail ${index + 1}`}
-                layout="fill"
-                objectFit="cover"
-                sizes="150px"
-                quality={75} 
+                fill
+                sizes="(max-width: 640px) 33vw, (max-width: 1024px) 25vw, 20vw"
+                className="object-cover"
+                quality={75}
+                priority={index < 3} 
                 data-ai-hint={image.includes('placehold.co') ? 'placeholder car thumbnail' : 'car thumbnail'}
               />
             </button>
@@ -71,3 +77,5 @@ export function ImageGallery({ images, altTextPrefix }: ImageGalleryProps) {
     </div>
   );
 }
+
+    
