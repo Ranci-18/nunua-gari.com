@@ -9,7 +9,7 @@ export const carSchema = z.object({
   mileage: z.coerce.number().int().min(0, { message: "Mileage must be non-negative." }),
   description: z.string().min(1, { message: "Description is required." }),
   images: z.array(z.string().url({ message: "Each image must be a valid URL." })).min(1, { message: "At least one image is required."}).max(5, { message: "Maximum 5 images allowed."}),
-  features: z.array(z.string().min(1)).optional().default([]), // Individual features still need content if added
+  features: z.array(z.string().min(1)).optional().default([]),
   engine: z.string().min(1, { message: "Engine details are required." }),
   transmission: z.string().min(1, { message: "Transmission type is required." }),
   fuelType: z.string().min(1, { message: "Fuel type is required." }),
@@ -29,12 +29,15 @@ export type CarFormData = z.infer<typeof carSchema>;
 export const contactSchema = z.object({
   name: z.string().min(1, { message: "Name is required." }),
   email: z.string().email({ message: "Invalid email address." }),
-  phone: z.string().optional().refine(val => !val || /^\+?[1-9]\d{1,14}$/.test(val), {
-    message: "Invalid phone number format."
+  phone: z.string().optional().refine(val => {
+    if (!val) return true; // Optional field, so empty is fine
+    const phoneNumberWithoutSpaces = val.replace(/\s+/g, ''); // Remove all whitespace
+    return /^\+?[1-9]\d{1,14}$/.test(phoneNumberWithoutSpaces);
+  }, {
+    message: "Invalid phone number format. It should start with '+' and country code, or be a local number. Spaces are allowed."
   }),
   preferredContactMethod: z.enum(['email', 'phone'], { required_error: "Please select a preferred contact method."}),
   message: z.string().min(1, { message: "Message is required." }),
 });
 
 export type ContactFormData = z.infer<typeof contactSchema>;
-
