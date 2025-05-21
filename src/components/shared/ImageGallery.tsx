@@ -1,7 +1,7 @@
 
 'use client';
 
-import Image from 'next/image'; // Still used for thumbnails
+import Image from 'next/image'; // Used for thumbnails
 import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
@@ -20,7 +20,7 @@ export function ImageGallery({ images, altTextPrefix }: ImageGalleryProps) {
     return (
       <Card className="overflow-hidden">
         <CardContent className="p-0">
-          <div className="w-full bg-muted flex items-center justify-center" style={{aspectRatio: '16/9'}}>
+          <div className="w-full bg-muted flex items-center justify-center" style={{aspectRatio: '4/3'}}> {/* Default aspect ratio for placeholder */}
             <p className="text-muted-foreground">No images available</p>
           </div>
         </CardContent>
@@ -33,16 +33,17 @@ export function ImageGallery({ images, altTextPrefix }: ImageGalleryProps) {
       <Card className="overflow-hidden shadow-md">
         <CardContent className="p-0">
           {/* Main Image Display */}
-          <div className="relative w-full bg-muted/20"> {/* Removed flex justify-center items-center */}
+          {/* This div acts as the container whose width the image will respect (up to its natural size) */}
+          <div className="relative w-full bg-muted/20">
             <img
               src={selectedImage}
               alt={`${altTextPrefix} - Main View`}
-              className="block" // Ensures it behaves like a block element
+              className="block" // Ensures it behaves like a block element and respects margin: auto
               style={{
-                width: '100%', // Takes full width of its container
-                maxWidth: '1066px', // But not more than 1066px (or image's natural max width)
-                height: 'auto', // Maintains aspect ratio
-                margin: '0 auto', // Centers if maxWidth makes it narrower than container
+                width: 'auto',        // Image will take its natural width
+                maxWidth: '100%',     // But not exceed the width of its container (the div above)
+                height: 'auto',       // Maintains aspect ratio
+                margin: '0 auto',     // Centers the image within its container if natural width is less than container width
               }}
               data-ai-hint={selectedImage.includes('placehold.co') ? 'placeholder car detail' : 'car detail'}
             />
@@ -76,3 +77,4 @@ export function ImageGallery({ images, altTextPrefix }: ImageGalleryProps) {
     </div>
   );
 }
+
