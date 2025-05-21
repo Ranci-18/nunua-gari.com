@@ -42,7 +42,7 @@ export function ContactForm() {
       name: '',
       email: '',
       phone: '',
-      preferredContactMethod: 'email',
+      preferredContactMethod: 'email', // Default to 'email'
       message: '',
     },
   });
@@ -53,28 +53,22 @@ export function ContactForm() {
         title: "Message Sent!",
         description: state.message,
       });
-      form.reset(); // Reset form fields to defaultValues
+      form.reset(); 
     } else if (state.message && !state.success) {
-      // General error toast
       toast({
         title: "Error",
         description: state.message || "An unexpected error occurred. Please check the form for details.",
         variant: "destructive",
       });
 
-      // Set field-specific errors from server validation
       if (state.errors) {
-        // Clear previous server errors first (optional, but can be good practice)
-        // Object.keys(form.getValues()).forEach(key => form.clearErrors(key as keyof ContactFormData));
-
         for (const fieldName in state.errors) {
-          // Ensure fieldName is a key of ContactFormData before trying to set an error
           if (Object.prototype.hasOwnProperty.call(form.getValues(), fieldName)) {
             const messages = state.errors[fieldName as keyof ContactFormData];
             if (messages && messages.length > 0) {
               form.setError(fieldName as keyof ContactFormData, {
                 type: 'server',
-                message: messages[0], // Display the first error message for the field
+                message: messages[0], 
               });
             }
           }
@@ -134,22 +128,22 @@ export function ContactForm() {
               <FormControl>
                 <RadioGroup
                   onValueChange={field.onChange}
-                  value={field.value} // Changed from defaultValue to value
+                  value={field.value} 
                   className="flex flex-col space-y-1 sm:flex-row sm:space-y-0 sm:space-x-4"
                 >
                   <FormItem className="flex items-center space-x-3 space-y-0">
                     <FormControl>
-                      <RadioGroupItem value="email" />
+                      <RadioGroupItem value="email" id="contact-email" />
                     </FormControl>
-                    <FormLabel className="font-normal">
+                    <FormLabel htmlFor="contact-email" className="font-normal">
                       Email
                     </FormLabel>
                   </FormItem>
                   <FormItem className="flex items-center space-x-3 space-y-0">
                     <FormControl>
-                      <RadioGroupItem value="phone" />
+                      <RadioGroupItem value="phone" id="contact-phone" />
                     </FormControl>
-                    <FormLabel className="font-normal">
+                    <FormLabel htmlFor="contact-phone" className="font-normal">
                       Phone
                     </FormLabel>
                   </FormItem>
