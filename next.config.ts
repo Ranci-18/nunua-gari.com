@@ -32,10 +32,11 @@ const nextConfig: NextConfig = {
     ],
   },
   experimental: {
- allowedDevOrigins: [
-    "*",
-      "https://9005-firebase-studio-1747811799289.cluster-c3a7z3wnwzapkx3rfr5kz62dac.cloudworkstations.dev",
- ],
+    allowedDevOrigins: [
+        "*",
+        "https://9005-firebase-studio-1747811799289.cluster-c3a7z3wnwzapkx3rfr5kz62dac.cloudworkstations.dev",
+    ],
+    serverComponentsExternalPackages: ['mongodb'], // Ensure mongodb is external for RSC
   },
   
   webpack: (config, { isServer }) => {
@@ -65,7 +66,14 @@ const nextConfig: NextConfig = {
       };
     }
 
-    config.externals = [...config.externals, 'mongodb']; // Keep mongodb as external
+    // For server-side, ensure 'mongodb' is treated as an external module.
+    if (isServer) {
+      if (!Array.isArray(config.externals)) {
+        config.externals = [];
+      }
+      config.externals.push('mongodb');
+    }
+    
     return config;
   },
 };
