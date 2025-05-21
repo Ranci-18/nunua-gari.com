@@ -1,3 +1,4 @@
+
 'use server';
 
 import { z } from 'zod';
@@ -50,8 +51,8 @@ export async function handleContactForm(prevState: any, formData: FormData) {
 export async function createCarAction(prevState: any, formData: FormData) {
   const rawFormData = {
     ...Object.fromEntries(formData.entries()),
-    features: formData.getAll('features[]'), // Handle array fields
-    images: formData.getAll('images[]'),
+    features: formData.getAll('features[]'),
+    images: formData.getAll('images[]').map(img => String(img).trim()).filter(img => img !== ''), // Filter empty strings and trim
   };
   
   const validatedFields = carSchema.safeParse(rawFormData);
@@ -65,11 +66,10 @@ export async function createCarAction(prevState: any, formData: FormData) {
   }
 
   try {
-    await addCar(validatedFields.data as Omit<Car, 'id' | 'createdAt' | 'updatedAt'>); // Type assertion might be needed if schema differs slightly from Car type.
+    await addCar(validatedFields.data as Omit<Car, 'id' | 'createdAt' | 'updatedAt'>);
     revalidatePath('/admin/cars');
-    revalidatePath('/'); // Revalidate home page listings
-    revalidatePath('/listings'); // Revalidate listings page
-    // redirect('/admin/cars'); // Cannot redirect here due to useFormState
+    revalidatePath('/'); 
+    revalidatePath('/listings'); 
     return { message: 'Car created successfully!', success: true, errors: {}, carId: null, redirectPath: '/admin/cars' };
 
   } catch (error) {
@@ -82,7 +82,7 @@ export async function updateCarAction(id: string, prevState: any, formData: Form
   const rawFormData = {
     ...Object.fromEntries(formData.entries()),
     features: formData.getAll('features[]'),
-    images: formData.getAll('images[]'),
+    images: formData.getAll('images[]').map(img => String(img).trim()).filter(img => img !== ''), // Filter empty strings and trim
   };
   
   const validatedFields = carSchema.safeParse(rawFormData);
@@ -102,10 +102,9 @@ export async function updateCarAction(id: string, prevState: any, formData: Form
     }
     revalidatePath('/admin/cars');
     revalidatePath(`/admin/cars/edit/${id}`);
-    revalidatePath(`/cars/${id}`); // Revalidate public car detail page
-    revalidatePath('/'); // Revalidate home page listings
-    revalidatePath('/listings'); // Revalidate listings page
-    // redirect(`/admin/cars/edit/${id}`); // Cannot redirect here due to useFormState
+    revalidatePath(`/cars/${id}`); 
+    revalidatePath('/'); 
+    revalidatePath('/listings'); 
     return { message: 'Car updated successfully!', success: true, errors: {}, carId: id, redirectPath: `/admin/cars/edit/${id}` };
   } catch (error) {
     console.error('Update car error:', error);
@@ -122,11 +121,8 @@ export async function deleteCarAction(id: string) {
 
     await deleteCar(id);
     revalidatePath('/admin/cars');
-    revalidatePath('/'); // Revalidate home page listings
-    revalidatePath('/listings'); // Revalidate listings page
-    // Potentially revalidate individual car page if it still exists or redirect
-    // For simplicity, we are not handling the case where a deleted car page is visited.
-    // A real app might redirect or show a "deleted" message.
+    revalidatePath('/'); 
+    revalidatePath('/listings'); 
     return { success: true, message: 'Car deleted successfully.' };
   } catch (error) {
     console.error('Delete car error:', error);
