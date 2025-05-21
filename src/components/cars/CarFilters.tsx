@@ -29,20 +29,26 @@ interface CarFiltersProps {
   onResetFilters: () => void;
 }
 
+const ANY_OPTION_VALUE = "__ANY_OPTION__"; // Special value for "Any" options
+
 export function CarFilters({ cars, filters, onFilterChange, onResetFilters }: CarFiltersProps) {
-  const uniqueMakes = useMemo(() => Array.from(new Set(cars.map(car => car.make))).sort(), [cars]);
+  const uniqueMakes = useMemo(() => Array.from(new Set(cars.map(car => car.make).filter(Boolean))).sort(), [cars]);
   
   const availableModels = useMemo(() => {
     if (filters.make) {
-      return Array.from(new Set(cars.filter(car => car.make === filters.make).map(car => car.model))).sort();
+      return Array.from(new Set(cars.filter(car => car.make === filters.make).map(car => car.model).filter(Boolean))).sort();
     }
-    return Array.from(new Set(cars.map(car => car.model))).sort();
+    return Array.from(new Set(cars.map(car => car.model).filter(Boolean))).sort();
   }, [cars, filters.make]);
 
-  const uniqueFuelTypes = useMemo(() => Array.from(new Set(cars.map(car => car.fuelType))).sort(), [cars]);
-  const uniqueTransmissions = useMemo(() => Array.from(new Set(cars.map(car => car.transmission))).sort(), [cars]);
+  const uniqueFuelTypes = useMemo(() => Array.from(new Set(cars.map(car => car.fuelType).filter(Boolean))).sort(), [cars]);
+  const uniqueTransmissions = useMemo(() => Array.from(new Set(cars.map(car => car.transmission).filter(Boolean))).sort(), [cars]);
 
   const currentYear = new Date().getFullYear();
+
+  const handleSelectChange = (filterName: keyof FiltersState, value: string) => {
+    onFilterChange(filterName, value === ANY_OPTION_VALUE ? '' : value);
+  };
 
   return (
     <Card className="mb-8 shadow-lg">
@@ -67,12 +73,15 @@ export function CarFilters({ cars, filters, onFilterChange, onResetFilters }: Ca
           {/* Make */}
           <div>
             <Label htmlFor="make">Make</Label>
-            <Select value={filters.make} onValueChange={(value) => onFilterChange('make', value)}>
+            <Select 
+              value={filters.make === '' ? ANY_OPTION_VALUE : filters.make} 
+              onValueChange={(value) => handleSelectChange('make', value)}
+            >
               <SelectTrigger id="make">
                 <SelectValue placeholder="Any Make" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Any Make</SelectItem>
+                <SelectItem value={ANY_OPTION_VALUE}>Any Make</SelectItem>
                 {uniqueMakes.map(make => (
                   <SelectItem key={make} value={make}>{make}</SelectItem>
                 ))}
@@ -83,12 +92,16 @@ export function CarFilters({ cars, filters, onFilterChange, onResetFilters }: Ca
           {/* Model */}
           <div>
             <Label htmlFor="model">Model</Label>
-            <Select value={filters.model} onValueChange={(value) => onFilterChange('model', value)} disabled={!filters.make && availableModels.length === uniqueMakes.length * 0}> {/* Simplified disable logic */}
+            <Select 
+              value={filters.model === '' ? ANY_OPTION_VALUE : filters.model} 
+              onValueChange={(value) => handleSelectChange('model', value)} 
+              disabled={!filters.make && availableModels.length === 0 && uniqueMakes.length > 0}
+            >
               <SelectTrigger id="model">
                 <SelectValue placeholder="Any Model" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Any Model</SelectItem>
+                <SelectItem value={ANY_OPTION_VALUE}>Any Model</SelectItem>
                 {availableModels.map(model => (
                   <SelectItem key={model} value={model}>{model}</SelectItem>
                 ))}
@@ -99,12 +112,15 @@ export function CarFilters({ cars, filters, onFilterChange, onResetFilters }: Ca
           {/* Fuel Type */}
           <div>
             <Label htmlFor="fuelType">Fuel Type</Label>
-            <Select value={filters.fuelType} onValueChange={(value) => onFilterChange('fuelType', value)}>
+            <Select 
+              value={filters.fuelType === '' ? ANY_OPTION_VALUE : filters.fuelType} 
+              onValueChange={(value) => handleSelectChange('fuelType', value)}
+            >
               <SelectTrigger id="fuelType">
                 <SelectValue placeholder="Any Fuel Type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Any Fuel Type</SelectItem>
+                <SelectItem value={ANY_OPTION_VALUE}>Any Fuel Type</SelectItem>
                 {uniqueFuelTypes.map(type => (
                   <SelectItem key={type} value={type}>{type}</SelectItem>
                 ))}
@@ -115,12 +131,15 @@ export function CarFilters({ cars, filters, onFilterChange, onResetFilters }: Ca
           {/* Transmission */}
           <div>
             <Label htmlFor="transmission">Transmission</Label>
-            <Select value={filters.transmission} onValueChange={(value) => onFilterChange('transmission', value)}>
+            <Select 
+              value={filters.transmission === '' ? ANY_OPTION_VALUE : filters.transmission} 
+              onValueChange={(value) => handleSelectChange('transmission', value)}
+            >
               <SelectTrigger id="transmission">
                 <SelectValue placeholder="Any Transmission" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Any Transmission</SelectItem>
+                <SelectItem value={ANY_OPTION_VALUE}>Any Transmission</SelectItem>
                 {uniqueTransmissions.map(type => (
                   <SelectItem key={type} value={type}>{type}</SelectItem>
                 ))}
