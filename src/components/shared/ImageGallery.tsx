@@ -37,7 +37,7 @@ export function ImageGallery({ images, altTextPrefix }: ImageGalleryProps) {
               src={selectedImage}
               alt={`${altTextPrefix} - Main View`}
               layout="fill"
-              objectFit="contain" 
+              objectFit="cover" 
               className="transition-opacity duration-300"
               // Adjust sizes: 100vw for smaller screens.
               // For md screens up to 7xl container (1280px), it takes 2/3 width. 2/3 of 1280 is ~853px.
@@ -77,3 +77,4 @@ export function ImageGallery({ images, altTextPrefix }: ImageGalleryProps) {
     </div>
   );
 }
+
