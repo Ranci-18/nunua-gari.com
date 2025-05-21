@@ -29,15 +29,22 @@ export type CarFormData = z.infer<typeof carSchema>;
 export const contactSchema = z.object({
   name: z.string().min(1, { message: "Name is required." }),
   email: z.string().email({ message: "Invalid email address." }),
-  phone: z.string().optional().refine(val => {
-    if (!val) return true; // Optional field, so empty is fine
-    const phoneNumberWithoutSpaces = val.replace(/\s+/g, ''); // Remove all whitespace
-    return /^\+?[1-9]\d{1,14}$/.test(phoneNumberWithoutSpaces);
-  }, {
-    message: "Invalid phone number format. It should start with '+' and country code, or be a local number. Spaces are allowed."
-  }),
+  phone: z.string()
+    .optional()
+    .refine(val => {
+      // If val is undefined (due to optional) or an empty string, it's valid.
+      if (val === undefined || val === null || val.trim() === '') {
+        return true;
+      }
+      // If val is provided, it must match the phone number format after stripping spaces.
+      const phoneNumberWithoutSpaces = val.replace(/\s+/g, '');
+      return /^\+?[1-9]\d{1,14}$/.test(phoneNumberWithoutSpaces);
+    }, {
+      message: "Invalid phone number format. It should start with '+' and country code, or be a local number. Spaces are allowed."
+    }),
   preferredContactMethod: z.enum(['email', 'phone'], { required_error: "Please select a preferred contact method."}),
   message: z.string().min(1, { message: "Message is required." }),
 });
 
 export type ContactFormData = z.infer<typeof contactSchema>;
+
