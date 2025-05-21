@@ -26,17 +26,17 @@ const nextConfig: NextConfig = {
     ],
   },
   webpack: (config) => {
-    // Add a rule to alias 'mongodb-client-encryption' to false.
-    // This is to prevent errors related to 'child_process' when client-side encryption is not used by the mongodb driver.
+    // Add rules to alias problematic optional MongoDB dependencies to false.
+    // This prevents errors related to 'child_process' or other Node.js native modules
+    // when these parts of the driver are not used (e.g., client-side encryption, native Kerberos).
     config.resolve.alias = {
       ...config.resolve.alias,
       'mongodb-client-encryption': false,
+      'kerberos': false,
+      'snappy': false,
+      '@mongodb-js/zstd': false,
+      'aws4': false, 
     };
-
-    // Note: Other optional MongoDB native dependencies that might sometimes cause issues
-    // in specific environments if not used can also be excluded or marked as external if needed:
-    // e.g., 'kerberos', 'snappy', '@mongodb-js/zstd'
-    // For now, we only address the specific 'child_process' issue via 'mongodb-client-encryption'.
 
     return config;
   },
