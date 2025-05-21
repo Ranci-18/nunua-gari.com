@@ -22,7 +22,11 @@ import { useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Mail, Phone, User, MessageSquare } from 'lucide-react';
 
-const initialState = {
+const initialState: {
+  message: string;
+  errors?: { [key: string]: string[] | undefined };
+  success: boolean;
+} = {
   message: '',
   errors: {},
   success: false,
@@ -33,7 +37,7 @@ export function ContactForm() {
   const { toast } = useToast();
 
   const form = useForm<ContactFormData>({
-    resolver: zodResolver(contactSchema),
+    resolver: zodResolver(contactSchema), // Client-side validation
     defaultValues: {
       name: '',
       email: '',
@@ -50,12 +54,26 @@ export function ContactForm() {
         description: state.message,
       });
       form.reset();
-    } else if (state.message && (Object.keys(state.errors || {}).length > 0 || !state.success)) {
-       toast({
+    } else if (state.message && !state.success) {
+      // General error toast
+      toast({
         title: "Error",
-        description: state.message,
+        description: state.message || "An unexpected error occurred. Please check the form for details.",
         variant: "destructive",
       });
+
+      // Set field-specific errors from server validation
+      if (state.errors) {
+        for (const fieldName in state.errors) {
+          const messages = state.errors[fieldName];
+          if (messages && messages.length > 0) {
+            form.setError(fieldName as keyof ContactFormData, {
+              type: 'server',
+              message: messages[0], // Display the first error message for the field
+            });
+          }
+        }
+      }
     }
   }, [state, toast, form]);
 
