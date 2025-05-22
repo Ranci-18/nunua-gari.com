@@ -52,7 +52,7 @@ export function ContactForm() {
         title: "Message Sent!",
         description: state.message,
       });
-      form.reset();
+      form.reset(); 
     } else if (state.message && !state.success) {
       toast({
         title: "Error",
@@ -67,7 +67,7 @@ export function ContactForm() {
             if (messages && messages.length > 0) {
               form.setError(fieldName as keyof ContactFormData, {
                 type: 'server',
-                message: messages[0],
+                message: messages[0], 
               });
             }
           }
@@ -139,7 +139,7 @@ export function ContactForm() {
               <FormControl>
                 <RadioGroup
                   onValueChange={field.onChange}
-                  value={field.value}
+                  value={field.value} 
                   className="flex flex-col space-y-1 sm:flex-row sm:space-y-0 sm:space-x-4"
                 >
                   <FormItem className="flex items-center space-x-3 space-y-0">
@@ -161,7 +161,7 @@ export function ContactForm() {
                 </RadioGroup>
               </FormControl>
               <FormMessage />
-            </FormItem>
+ </FormItem>
           )}
         />
         <FormField

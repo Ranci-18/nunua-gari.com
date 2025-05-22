@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import React from 'react';
-import { FilterX, Search } from 'lucide-react';
+import { FilterX, Search, RotateCcw, Plus, Minus } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 
 // Common car makes
@@ -43,18 +43,20 @@ interface CarFiltersProps {
 
 const ANY_OPTION_VALUE = "__ANY_OPTION__"; // Special value for "Any" options
 
+const initialFilters: FiltersState = {
+  searchTerm: '',
+  make: 'all',
+  model: 'all',
+  minYear: 'all',
+  maxYear: 'all',
+  minPrice: 'all',
+  maxPrice: 'all',
+  fuelType: 'all',
+  transmission: 'all',
+};
+
 export function CarFilters({ initialCars }: CarFiltersProps) {
-  const [filters, setFilters] = useState<FiltersState>({
-    searchTerm: '',
-    make: '',
-    model: '',
-    minYear: '',
-    maxYear: '',
-    minPrice: '',
-    maxPrice: '',
-    fuelType: '',
-    transmission: '',
-  });
+  const [filters, setFilters] = useState<FiltersState>(initialFilters);
 
   // Get unique models for the selected make
   const availableModels = useMemo(() => {
@@ -68,12 +70,11 @@ export function CarFilters({ initialCars }: CarFiltersProps) {
 
   // Get min and max years from the car list
   const yearRange = useMemo(() => {
-    const years = initialCars.map(car => car.year);
     return {
-      min: Math.min(...years),
-      max: Math.max(...years)
+      min: 1999,
+      max: new Date().getFullYear()
     };
-  }, [initialCars]);
+  }, []);
 
   // Get min and max prices from the car list
   const priceRange = useMemo(() => {
@@ -94,26 +95,26 @@ export function CarFilters({ initialCars }: CarFiltersProps) {
         car.description.toLowerCase().includes(searchTerm);
 
       // Make filter
-      const matchesMake = !filters.make || car.make === filters.make;
+      const matchesMake = filters.make === 'all' || car.make === filters.make;
 
       // Model filter
-      const matchesModel = !filters.model || car.model === filters.model;
+      const matchesModel = filters.model === 'all' || car.model === filters.model;
 
       // Year range filter
       const year = car.year;
-      const matchesYear = (!filters.minYear || year >= parseInt(filters.minYear)) &&
-                         (!filters.maxYear || year <= parseInt(filters.maxYear));
+      const matchesYear = (filters.minYear === 'all' || year >= parseInt(filters.minYear)) &&
+                         (filters.maxYear === 'all' || year <= parseInt(filters.maxYear));
 
       // Price range filter
       const price = car.price;
-      const matchesPrice = (!filters.minPrice || price >= parseInt(filters.minPrice)) &&
-                          (!filters.maxPrice || price <= parseInt(filters.maxPrice));
+      const matchesPrice = (filters.minPrice === 'all' || price >= parseInt(filters.minPrice)) &&
+                          (filters.maxPrice === 'all' || price <= parseInt(filters.maxPrice));
 
       // Fuel type filter
-      const matchesFuel = !filters.fuelType || car.fuelType === filters.fuelType;
+      const matchesFuel = filters.fuelType === 'all' || car.fuelType === filters.fuelType;
 
       // Transmission filter
-      const matchesTransmission = !filters.transmission || car.transmission === filters.transmission;
+      const matchesTransmission = filters.transmission === 'all' || car.transmission === filters.transmission;
 
       return matchesSearch && matchesMake && matchesModel && matchesYear && 
              matchesPrice && matchesFuel && matchesTransmission;
@@ -124,6 +125,66 @@ export function CarFilters({ initialCars }: CarFiltersProps) {
     setFilters(prev => ({ ...prev, [filterName]: value === ANY_OPTION_VALUE ? '' : value }));
   };
 
+  const resetFilters = () => {
+    setFilters(initialFilters);
+  };
+
+  const handleYearChange = (type: 'min' | 'max', value: string) => {
+    const numValue = parseInt(value) || 0;
+    if (type === 'min') {
+      setFilters(prev => ({
+        ...prev,
+        minYear: Math.min(Math.max(numValue, yearRange.min), parseInt(prev.maxYear)).toString()
+      }));
+    } else {
+      setFilters(prev => ({
+        ...prev,
+        maxYear: Math.max(Math.min(numValue, yearRange.max), parseInt(prev.minYear)).toString()
+      }));
+    }
+  };
+
+  const handlePriceChange = (type: 'min' | 'max', value: string) => {
+    const numValue = parseInt(value) || 0;
+    if (type === 'min') {
+      setFilters(prev => ({
+        ...prev,
+        minPrice: Math.min(Math.max(numValue, 0), parseInt(prev.maxPrice)).toString()
+      }));
+    } else {
+      setFilters(prev => ({
+        ...prev,
+        maxPrice: Math.max(Math.min(numValue, 1000000), parseInt(prev.minPrice)).toString()
+      }));
+    }
+  };
+
+  const incrementValue = (type: 'min' | 'max', field: 'Year' | 'Price') => {
+    const step = field === 'Year' ? 1 : 10000;
+    const key = `${type}${field}` as 'minYear' | 'maxYear' | 'minPrice' | 'maxPrice';
+    const currentValue = parseInt(filters[key]);
+    const newValue = currentValue + step;
+    
+    if (field === 'Year') {
+      handleYearChange(type, newValue.toString());
+    } else {
+      handlePriceChange(type, newValue.toString());
+    }
+  };
+
+  const decrementValue = (type: 'min' | 'max', field: 'Year' | 'Price') => {
+    const step = field === 'Year' ? 1 : 10000;
+    const key = `${type}${field}` as 'minYear' | 'maxYear' | 'minPrice' | 'maxPrice';
+    const currentValue = parseInt(filters[key]);
+    const newValue = currentValue - step;
+    
+    if (field === 'Year') {
+      handleYearChange(type, newValue.toString());
+    } else {
+      handlePriceChange(type, newValue.toString());
+    }
+  };
+
   return (
     <Card className="mb-8 shadow-lg">
       <CardHeader>
@@ -132,154 +193,150 @@ export function CarFilters({ initialCars }: CarFiltersProps) {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-end">
-          {/* Search Term */}
-          <div className="md:col-span-2 lg:col-span-3">
-            <Label htmlFor="searchTerm">Search (Make, Model, Description)</Label>
-            <Input
-              id="searchTerm"
-              placeholder="e.g., Toyota Camry reliable"
-              value={filters.searchTerm}
-              onChange={(e) => handleSelectChange('searchTerm', e.target.value)}
-            />
-          </div>
-
-          {/* Make */}
-          <div>
-            <Label htmlFor="make">Make</Label>
-            <Select 
-              value={filters.make === '' ? ANY_OPTION_VALUE : filters.make} 
-              onValueChange={(value) => handleSelectChange('make', value)}
+        <div className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div className="flex gap-2">
+              <Input
+                placeholder="Search cars..."
+                value={filters.searchTerm}
+                onChange={(e) => setFilters(prev => ({ ...prev, searchTerm: e.target.value }))}
+                className="flex-1"
+              />
+              {Object.values(filters).some(value => value !== 'all' && value !== '') && (
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={resetFilters}
+                  title="Reset all filters"
+                >
+                  <RotateCcw className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
+            
+            <Select
+              value={filters.make}
+              onValueChange={(value) => setFilters(prev => ({ ...prev, make: value, model: 'all' }))}
             >
-              <SelectTrigger id="make">
-                <SelectValue placeholder="Any Make" />
+              <SelectTrigger>
+                <SelectValue placeholder="Select Make" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value={ANY_OPTION_VALUE}>Any Make</SelectItem>
+                <SelectItem value="all">All Makes</SelectItem>
                 {CAR_MAKES.map(make => (
                   <SelectItem key={make} value={make}>{make}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
-          </div>
 
-          {/* Model */}
-          <div>
-            <Label htmlFor="model">Model</Label>
-            <Select 
-              value={filters.model === '' ? ANY_OPTION_VALUE : filters.model} 
-              onValueChange={(value) => handleSelectChange('model', value)} 
-              disabled={!filters.make && availableModels.length === 0 && CAR_MAKES.length > 0}
+            <Select
+              value={filters.model}
+              onValueChange={(value) => setFilters(prev => ({ ...prev, model: value }))}
+              disabled={filters.make === 'all'}
             >
-              <SelectTrigger id="model">
-                <SelectValue placeholder="Any Model" />
+              <SelectTrigger>
+                <SelectValue placeholder="Select Model" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value={ANY_OPTION_VALUE}>Any Model</SelectItem>
+                <SelectItem value="all">All Models</SelectItem>
                 {availableModels.map(model => (
                   <SelectItem key={model} value={model}>{model}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
-          </div>
-          
-          {/* Fuel Type */}
-          <div>
-            <Label htmlFor="fuelType">Fuel Type</Label>
-            <Select 
-              value={filters.fuelType === '' ? ANY_OPTION_VALUE : filters.fuelType} 
-              onValueChange={(value) => handleSelectChange('fuelType', value)}
+            
+            <Select
+              value={filters.fuelType}
+              onValueChange={(value) => setFilters(prev => ({ ...prev, fuelType: value }))}
             >
-              <SelectTrigger id="fuelType">
-                <SelectValue placeholder="Any Fuel Type" />
+              <SelectTrigger>
+                <SelectValue placeholder="Fuel Type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value={ANY_OPTION_VALUE}>Any Fuel Type</SelectItem>
+                <SelectItem value="all">All Fuel Types</SelectItem>
                 {FUEL_TYPES.map(type => (
                   <SelectItem key={type} value={type}>{type}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
-          </div>
 
-          {/* Transmission */}
-          <div>
-            <Label htmlFor="transmission">Transmission</Label>
-            <Select 
-              value={filters.transmission === '' ? ANY_OPTION_VALUE : filters.transmission} 
-              onValueChange={(value) => handleSelectChange('transmission', value)}
+            <Select
+              value={filters.transmission}
+              onValueChange={(value) => setFilters(prev => ({ ...prev, transmission: value }))}
             >
-              <SelectTrigger id="transmission">
-                <SelectValue placeholder="Any Transmission" />
+              <SelectTrigger>
+                <SelectValue placeholder="Transmission" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value={ANY_OPTION_VALUE}>Any Transmission</SelectItem>
+                <SelectItem value="all">All Transmissions</SelectItem>
                 {TRANSMISSION_TYPES.map(type => (
                   <SelectItem key={type} value={type}>{type}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
-          </div>
 
-          {/* Year Range */}
-          <div className="grid grid-cols-2 gap-2">
-            <div>
-              <Label htmlFor="minYear">Min Year</Label>
-              <Input
-                id="minYear"
-                type="number"
-                placeholder="1990"
-                value={filters.minYear}
-                onChange={(e) => handleSelectChange('minYear', e.target.value)}
-                min={yearRange.min.toString()}
-                max={yearRange.max.toString()}
-              />
+            {/* Year Range */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Manufacture Year Range</label>
+              <div className="flex gap-2">
+                <Input
+                  type="number"
+                  value={filters.minYear}
+                  onChange={e => setFilters(prev => ({ ...prev, minYear: e.target.value }))}
+                  min={yearRange.min}
+                  max={filters.maxYear}
+                  step={1}
+                  placeholder={`Min (${yearRange.min})`}
+                  className="h-8"
+                />
+                <Input
+                  type="number"
+                  value={filters.maxYear}
+                  onChange={e => setFilters(prev => ({ ...prev, maxYear: e.target.value }))}
+                  min={filters.minYear}
+                  max={yearRange.max}
+                  step={1}
+                  placeholder={`Max (${yearRange.max})`}
+                  className="h-8"
+                />
+              </div>
+              <div className="flex justify-between text-xs text-muted-foreground">
+                <span>Min: {yearRange.min}</span>
+                <span>Max: {yearRange.max}</span>
+              </div>
             </div>
-            <div>
-              <Label htmlFor="maxYear">Max Year</Label>
-              <Input
-                id="maxYear"
-                type="number"
-                placeholder={yearRange.max.toString()}
-                value={filters.maxYear}
-                onChange={(e) => handleSelectChange('maxYear', e.target.value)}
-                min={yearRange.min.toString()}
-                max={yearRange.max.toString()}
-              />
+
+            {/* Price Range */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Price Range (KES)</label>
+              <div className="flex gap-2">
+                <Input
+                  type="number"
+                  value={filters.minPrice}
+                  onChange={e => setFilters(prev => ({ ...prev, minPrice: e.target.value }))}
+                  min={0}
+                  max={filters.maxPrice}
+                  step={10000}
+                  placeholder="Min (0)"
+                  className="h-8"
+                />
+                <Input
+                  type="number"
+                  value={filters.maxPrice}
+                  onChange={e => setFilters(prev => ({ ...prev, maxPrice: e.target.value }))}
+                  min={filters.minPrice}
+                  max={100000000}
+                  step={10000}
+                  placeholder="Max (100,000,000)"
+                  className="h-8"
+                />
+              </div>
+              <div className="flex justify-between text-xs text-muted-foreground">
+                <span>Min: KES 0</span>
+                <span>Max: KES 100,000,000</span>
+              </div>
             </div>
           </div>
-
-          {/* Price Range */}
-          <div className="grid grid-cols-2 gap-2">
-            <div>
-              <Label htmlFor="minPrice">Min Price (Ksh)</Label>
-              <Input
-                id="minPrice"
-                type="number"
-                placeholder="0"
-                value={filters.minPrice}
-                onChange={(e) => handleSelectChange('minPrice', e.target.value)}
-                min={priceRange.min.toString()}
-              />
-            </div>
-            <div>
-              <Label htmlFor="maxPrice">Max Price (Ksh)</Label>
-              <Input
-                id="maxPrice"
-                type="number"
-                placeholder="10000000"
-                value={filters.maxPrice}
-                onChange={(e) => handleSelectChange('maxPrice', e.target.value)}
-                min={priceRange.min.toString()}
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="flex justify-end">
-          <Button variant="outline" className="flex items-center gap-2">
-            <FilterX className="h-4 w-4" /> Reset Filters
-          </Button>
         </div>
 
         {/* Results count */}
