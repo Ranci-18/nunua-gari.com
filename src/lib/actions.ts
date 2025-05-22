@@ -24,6 +24,7 @@ export async function handleContactForm(prevState: any, formData: FormData) {
   console.log("Preferred Contact Method from form:", rawFormData.preferredContactMethod);
   console.log("Message from form:", rawFormData.message);
   console.log("--------------------------------------------------");
+  console.log(`Preferred Contact Method: ${rawFormData.preferredContactMethod}, Type: ${typeof rawFormData.preferredContactMethod}`);
 
   const validatedFields = contactSchema.safeParse(rawFormData);
 
