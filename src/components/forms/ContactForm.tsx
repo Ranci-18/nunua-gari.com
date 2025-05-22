@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useActionState } from 'react';
@@ -18,7 +17,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { useEffect } from 'react';
+import { useEffect, startTransition } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Mail, Phone, User, MessageSquare } from 'lucide-react';
 
@@ -37,12 +36,12 @@ export function ContactForm() {
   const { toast } = useToast();
 
   const form = useForm<ContactFormData>({
-    resolver: zodResolver(contactSchema), // Client-side validation
+    resolver: zodResolver(contactSchema),
     defaultValues: {
       name: '',
       email: '',
       phone: '',
-      preferredContactMethod: 'email', // Default to 'email'
+      preferredContactMethod: 'email',
       message: '',
     },
   });
@@ -53,7 +52,7 @@ export function ContactForm() {
         title: "Message Sent!",
         description: state.message,
       });
-      form.reset(); 
+      form.reset();
     } else if (state.message && !state.success) {
       toast({
         title: "Error",
@@ -68,7 +67,7 @@ export function ContactForm() {
             if (messages && messages.length > 0) {
               form.setError(fieldName as keyof ContactFormData, {
                 type: 'server',
-                message: messages[0], 
+                message: messages[0],
               });
             }
           }
@@ -77,9 +76,21 @@ export function ContactForm() {
     }
   }, [state, toast, form]);
 
+  const onSubmit = async (data: ContactFormData) => {
+    const formData = new FormData();
+    Object.entries(data).forEach(([key, value]) => {
+      if (value !== undefined) {
+        formData.append(key, value);
+      }
+    });
+    startTransition(() => {
+      formAction(formData);
+    });
+  };
+
   return (
     <Form {...form}>
-      <form action={formAction} className="space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <FormField
           control={form.control}
           name="name"
@@ -128,7 +139,7 @@ export function ContactForm() {
               <FormControl>
                 <RadioGroup
                   onValueChange={field.onChange}
-                  value={field.value} 
+                  value={field.value}
                   className="flex flex-col space-y-1 sm:flex-row sm:space-y-0 sm:space-x-4"
                 >
                   <FormItem className="flex items-center space-x-3 space-y-0">
@@ -150,7 +161,7 @@ export function ContactForm() {
                 </RadioGroup>
               </FormControl>
               <FormMessage />
- </FormItem>
+            </FormItem>
           )}
         />
         <FormField
