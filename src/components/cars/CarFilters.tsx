@@ -1,14 +1,29 @@
-
 'use client';
 
+import { useState, useMemo } from 'react';
 import type { Car } from '@/types';
+import { CarCard } from './CarCard';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import React, { useMemo } from 'react';
+import React from 'react';
 import { FilterX, Search } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
+
+// Common car makes
+const CAR_MAKES = [
+  'Toyota', 'Honda', 'Ford', 'Chevrolet', 'Nissan', 'BMW', 'Mercedes-Benz', 
+  'Audi', 'Volkswagen', 'Hyundai', 'Kia', 'Mazda', 'Subaru', 'Lexus', 
+  'Tesla', 'Porsche', 'Jeep', 'Dodge', 'Chrysler', 'GMC', 'Buick', 'Cadillac',
+  'Acura', 'Infiniti', 'Lincoln', 'Volvo', 'Land Rover', 'Jaguar', 'Mini',
+  'Mitsubishi', 'Suzuki', 'Fiat', 'Alfa Romeo', 'Maserati', 'Bentley', 'Rolls-Royce',
+  'Lamborghini', 'Ferrari', 'Aston Martin', 'McLaren', 'Bugatti'
+].sort();
+
+const TRANSMISSION_TYPES = ['Automatic', 'Manual', 'CVT'] as const;
+const FUEL_TYPES = ['Petrol', 'Diesel', 'Electric'] as const;
 
 export interface FiltersState {
   searchTerm: string;
@@ -23,31 +38,90 @@ export interface FiltersState {
 }
 
 interface CarFiltersProps {
-  cars: Car[];
-  filters: FiltersState;
-  onFilterChange: (filterName: keyof FiltersState, value: string) => void;
-  onResetFilters: () => void;
+  initialCars: Car[];
 }
 
 const ANY_OPTION_VALUE = "__ANY_OPTION__"; // Special value for "Any" options
 
-export function CarFilters({ cars, filters, onFilterChange, onResetFilters }: CarFiltersProps) {
-  const uniqueMakes = useMemo(() => Array.from(new Set(cars.map(car => car.make).filter(Boolean))).sort(), [cars]);
-  
+export function CarFilters({ initialCars }: CarFiltersProps) {
+  const [filters, setFilters] = useState<FiltersState>({
+    searchTerm: '',
+    make: '',
+    model: '',
+    minYear: '',
+    maxYear: '',
+    minPrice: '',
+    maxPrice: '',
+    fuelType: '',
+    transmission: '',
+  });
+
+  // Get unique models for the selected make
   const availableModels = useMemo(() => {
-    if (filters.make) {
-      return Array.from(new Set(cars.filter(car => car.make === filters.make).map(car => car.model).filter(Boolean))).sort();
-    }
-    return Array.from(new Set(cars.map(car => car.model).filter(Boolean))).sort();
-  }, [cars, filters.make]);
+    if (!filters.make) return [];
+    return [...new Set(
+      initialCars
+        .filter(car => car.make === filters.make)
+        .map(car => car.model)
+    )].sort();
+  }, [filters.make, initialCars]);
 
-  const uniqueFuelTypes = useMemo(() => Array.from(new Set(cars.map(car => car.fuelType).filter(Boolean))).sort(), [cars]);
-  const uniqueTransmissions = useMemo(() => Array.from(new Set(cars.map(car => car.transmission).filter(Boolean))).sort(), [cars]);
+  // Get min and max years from the car list
+  const yearRange = useMemo(() => {
+    const years = initialCars.map(car => car.year);
+    return {
+      min: Math.min(...years),
+      max: Math.max(...years)
+    };
+  }, [initialCars]);
 
-  const currentYear = new Date().getFullYear();
+  // Get min and max prices from the car list
+  const priceRange = useMemo(() => {
+    const prices = initialCars.map(car => car.price);
+    return {
+      min: Math.min(...prices),
+      max: Math.max(...prices)
+    };
+  }, [initialCars]);
+
+  const filteredCars = useMemo(() => {
+    return initialCars.filter(car => {
+      // Search term filter (case-insensitive)
+      const searchTerm = filters.searchTerm.toLowerCase();
+      const matchesSearch = !searchTerm || 
+        car.make.toLowerCase().includes(searchTerm) ||
+        car.model.toLowerCase().includes(searchTerm) ||
+        car.description.toLowerCase().includes(searchTerm);
+
+      // Make filter
+      const matchesMake = !filters.make || car.make === filters.make;
+
+      // Model filter
+      const matchesModel = !filters.model || car.model === filters.model;
+
+      // Year range filter
+      const year = car.year;
+      const matchesYear = (!filters.minYear || year >= parseInt(filters.minYear)) &&
+                         (!filters.maxYear || year <= parseInt(filters.maxYear));
+
+      // Price range filter
+      const price = car.price;
+      const matchesPrice = (!filters.minPrice || price >= parseInt(filters.minPrice)) &&
+                          (!filters.maxPrice || price <= parseInt(filters.maxPrice));
+
+      // Fuel type filter
+      const matchesFuel = !filters.fuelType || car.fuelType === filters.fuelType;
+
+      // Transmission filter
+      const matchesTransmission = !filters.transmission || car.transmission === filters.transmission;
+
+      return matchesSearch && matchesMake && matchesModel && matchesYear && 
+             matchesPrice && matchesFuel && matchesTransmission;
+    });
+  }, [initialCars, filters]);
 
   const handleSelectChange = (filterName: keyof FiltersState, value: string) => {
-    onFilterChange(filterName, value === ANY_OPTION_VALUE ? '' : value);
+    setFilters(prev => ({ ...prev, [filterName]: value === ANY_OPTION_VALUE ? '' : value }));
   };
 
   return (
@@ -66,7 +140,7 @@ export function CarFilters({ cars, filters, onFilterChange, onResetFilters }: Ca
               id="searchTerm"
               placeholder="e.g., Toyota Camry reliable"
               value={filters.searchTerm}
-              onChange={(e) => onFilterChange('searchTerm', e.target.value)}
+              onChange={(e) => handleSelectChange('searchTerm', e.target.value)}
             />
           </div>
 
@@ -82,7 +156,7 @@ export function CarFilters({ cars, filters, onFilterChange, onResetFilters }: Ca
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value={ANY_OPTION_VALUE}>Any Make</SelectItem>
-                {uniqueMakes.map(make => (
+                {CAR_MAKES.map(make => (
                   <SelectItem key={make} value={make}>{make}</SelectItem>
                 ))}
               </SelectContent>
@@ -95,7 +169,7 @@ export function CarFilters({ cars, filters, onFilterChange, onResetFilters }: Ca
             <Select 
               value={filters.model === '' ? ANY_OPTION_VALUE : filters.model} 
               onValueChange={(value) => handleSelectChange('model', value)} 
-              disabled={!filters.make && availableModels.length === 0 && uniqueMakes.length > 0}
+              disabled={!filters.make && availableModels.length === 0 && CAR_MAKES.length > 0}
             >
               <SelectTrigger id="model">
                 <SelectValue placeholder="Any Model" />
@@ -121,7 +195,7 @@ export function CarFilters({ cars, filters, onFilterChange, onResetFilters }: Ca
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value={ANY_OPTION_VALUE}>Any Fuel Type</SelectItem>
-                {uniqueFuelTypes.map(type => (
+                {FUEL_TYPES.map(type => (
                   <SelectItem key={type} value={type}>{type}</SelectItem>
                 ))}
               </SelectContent>
@@ -140,7 +214,7 @@ export function CarFilters({ cars, filters, onFilterChange, onResetFilters }: Ca
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value={ANY_OPTION_VALUE}>Any Transmission</SelectItem>
-                {uniqueTransmissions.map(type => (
+                {TRANSMISSION_TYPES.map(type => (
                   <SelectItem key={type} value={type}>{type}</SelectItem>
                 ))}
               </SelectContent>
@@ -156,9 +230,9 @@ export function CarFilters({ cars, filters, onFilterChange, onResetFilters }: Ca
                 type="number"
                 placeholder="1990"
                 value={filters.minYear}
-                onChange={(e) => onFilterChange('minYear', e.target.value)}
-                min="1900"
-                max={currentYear.toString()}
+                onChange={(e) => handleSelectChange('minYear', e.target.value)}
+                min={yearRange.min.toString()}
+                max={yearRange.max.toString()}
               />
             </div>
             <div>
@@ -166,11 +240,11 @@ export function CarFilters({ cars, filters, onFilterChange, onResetFilters }: Ca
               <Input
                 id="maxYear"
                 type="number"
-                placeholder={currentYear.toString()}
+                placeholder={yearRange.max.toString()}
                 value={filters.maxYear}
-                onChange={(e) => onFilterChange('maxYear', e.target.value)}
-                min="1900"
-                max={currentYear.toString()}
+                onChange={(e) => handleSelectChange('maxYear', e.target.value)}
+                min={yearRange.min.toString()}
+                max={yearRange.max.toString()}
               />
             </div>
           </div>
@@ -184,8 +258,8 @@ export function CarFilters({ cars, filters, onFilterChange, onResetFilters }: Ca
                 type="number"
                 placeholder="0"
                 value={filters.minPrice}
-                onChange={(e) => onFilterChange('minPrice', e.target.value)}
-                min="0"
+                onChange={(e) => handleSelectChange('minPrice', e.target.value)}
+                min={priceRange.min.toString()}
               />
             </div>
             <div>
@@ -195,18 +269,37 @@ export function CarFilters({ cars, filters, onFilterChange, onResetFilters }: Ca
                 type="number"
                 placeholder="10000000"
                 value={filters.maxPrice}
-                onChange={(e) => onFilterChange('maxPrice', e.target.value)}
-                min="0"
+                onChange={(e) => handleSelectChange('maxPrice', e.target.value)}
+                min={priceRange.min.toString()}
               />
             </div>
           </div>
         </div>
 
         <div className="flex justify-end">
-          <Button variant="outline" onClick={onResetFilters} className="flex items-center gap-2">
+          <Button variant="outline" className="flex items-center gap-2">
             <FilterX className="h-4 w-4" /> Reset Filters
           </Button>
         </div>
+
+        {/* Results count */}
+        <div className="text-sm text-muted-foreground">
+          Showing {filteredCars.length} of {initialCars.length} cars
+        </div>
+
+        {/* Car grid */}
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          {filteredCars.map((car) => (
+            <CarCard key={car.id} car={car} />
+          ))}
+        </div>
+
+        {/* No results message */}
+        {filteredCars.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-lg text-muted-foreground">No cars match your filters.</p>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

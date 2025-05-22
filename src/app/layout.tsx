@@ -1,13 +1,9 @@
-'use client';
-
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { Toaster } from "@/components/ui/toaster";
-import { useEffect } from 'react';
-import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -19,36 +15,22 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
-// export const metadata: Metadata = { // Metadata cannot be dynamically set in a client component root layout easily
-//   title: 'Premium Auto - Your Trusted Car Marketplace',
-//   description: 'Find your next car with Premium Auto. Quality listings and great prices.',
-// };
+export const metadata: Metadata = {
+  title: 'Premium Auto - Your Trusted Car Marketplace',
+  description: 'Find your next car with Premium Auto. Quality listings and great prices.',
+};
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const searchParams = useSearchParams();
-  const pathname = usePathname();
-  const router = useRouter();
-
-  useEffect(() => {
-    // Set document title for client component
-    document.title = 'Premium Auto - Your Trusted Car Marketplace';
-    
-    const secret = searchParams.get('admin_secret');
-    if (pathname === '/' && secret === 'St(0)ic_S(1)gma.') {
-      sessionStorage.setItem('admin_access_granted', 'true');
-      router.push('/admin');
-    }
-  }, [pathname, searchParams, router]);
-
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <title>Premium Auto - Your Trusted Car Marketplace</title>
-        <meta name="description" content="Find your next car with Premium Auto. Quality listings and great prices." />
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}>
         <Navbar />
