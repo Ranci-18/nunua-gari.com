@@ -5,7 +5,7 @@ import { Suspense } from 'react';
 import { AdminSidebar } from '@/components/layout/AdminSidebar';
 import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
 import { Toaster } from '@/components/ui/toaster';
-import { AdminAccessCheck } from '@/components/layout/AdminAccessCheck';
+import AdminAccessCheck from '@/components/layout/AdminAccessCheck';
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (

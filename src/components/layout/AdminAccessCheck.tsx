@@ -1,77 +1,65 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
-export function AdminAccessCheck({ children }: { children: React.ReactNode }) {
+export default function AdminAccessCheck({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const [isAuthorized, setIsAuthorized] = useState(false);
+  const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
 
-  useEffect(() => {
-    const verifyAccess = async () => {
-      try {
-        // Check URL for admin secret
-        const secret = searchParams.get('admin');
-        
-        if (secret) {
-          const response = await fetch('/api/admin/verify', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ secret }),
-          });
-
-          const data = await response.json();
-          
-          if (data.success) {
-            // Remove the secret from URL without refreshing
-            const newUrl = window.location.pathname;
-            window.history.replaceState({}, '', newUrl);
-            setIsAuthorized(true);
-          } else {
-            setIsAuthorized(false);
-            router.replace('/');
-          }
-        } else {
-          // Check for existing access cookie
-          const hasAccess = document.cookie.includes('admin_access=true');
-          
-          if (hasAccess) {
-            setIsAuthorized(true);
-          } else {
-            setIsAuthorized(false);
-            router.replace('/');
-          }
-        }
-      } catch (error) {
-        console.error('Error verifying admin access:', error);
-        setIsAuthorized(false);
-        router.replace('/');
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+      const response = await fetch('/api/admin/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
+      });
+      
+      if (response.ok) {
+        setIsAuthorized(true);
+      } else {
+        router.push('/');
       }
-    };
+    } catch {
+      router.push('/');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    verifyAccess();
-  }, [router, searchParams]);
-
-  // Show nothing while checking authorization
-  if (isAuthorized === null) {
+  if (!isAuthorized) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <div className="flex flex-col items-center gap-4">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
-          <p className="text-muted-foreground">Verifying access...</p>
-        </div>
-      </div>
+      <Dialog open={true}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Admin Access</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <Input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter admin password"
+            />
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              Access Admin
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
     );
   }
 
-  // Show nothing if not authorized (will be redirected)
-  if (!isAuthorized) {
-    return null;
-  }
-
-  // Show content only if authorized
   return <>{children}</>;
 } 
