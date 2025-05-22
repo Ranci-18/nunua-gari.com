@@ -85,6 +85,16 @@ export function CarFilters({ initialCars }: CarFiltersProps) {
     };
   }, [initialCars]);
 
+  const lowerCaseFilters = useMemo(() => {
+    return {
+      ...filters,
+      make: filters.make === 'all' ? 'all' : filters.make.toLowerCase(),
+      model: filters.model === 'all' ? 'all' : filters.model.toLowerCase(),
+      fuelType: filters.fuelType === 'all' ? 'all' : filters.fuelType.toLowerCase(),
+      transmission: filters.transmission === 'all' ? 'all' : filters.transmission.toLowerCase(),
+    };
+  }, [filters]);
+
   const filteredCars = useMemo(() => {
     return initialCars.filter(car => {
       // Search term filter (case-insensitive)
@@ -95,11 +105,11 @@ export function CarFilters({ initialCars }: CarFiltersProps) {
         car.description.toLowerCase().includes(searchTerm);
 
       // Make filter
-      const matchesMake = filters.make === 'all' || car.make === filters.make;
+      const matchesMake = lowerCaseFilters.make === 'all' || car.make.toLowerCase() === lowerCaseFilters.make;
 
       // Model filter
-      const matchesModel = filters.model === 'all' || car.model === filters.model;
-
+      const matchesModel = lowerCaseFilters.model === 'all' || car.model.toLowerCase() === lowerCaseFilters.model;
+      
       // Year range filter
       const year = car.year;
       const matchesYear = (filters.minYear === 'all' || year >= parseInt(filters.minYear)) &&
@@ -111,10 +121,10 @@ export function CarFilters({ initialCars }: CarFiltersProps) {
                           (filters.maxPrice === 'all' || price <= parseInt(filters.maxPrice));
 
       // Fuel type filter
-      const matchesFuel = filters.fuelType === 'all' || car.fuelType === filters.fuelType;
+      const matchesFuel = lowerCaseFilters.fuelType === 'all' || car.fuelType.toLowerCase() === lowerCaseFilters.fuelType;
 
       // Transmission filter
-      const matchesTransmission = filters.transmission === 'all' || car.transmission === filters.transmission;
+      const matchesTransmission = lowerCaseFilters.transmission === 'all' || car.transmission.toLowerCase() === lowerCaseFilters.transmission;
 
       return matchesSearch && matchesMake && matchesModel && matchesYear && 
              matchesPrice && matchesFuel && matchesTransmission;
