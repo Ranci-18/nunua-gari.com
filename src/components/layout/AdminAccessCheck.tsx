@@ -26,9 +26,6 @@ export function AdminAccessCheck({ children }: { children: React.ReactNode }) {
           const data = await response.json();
           
           if (data.success) {
-            // Set both sessionStorage and localStorage for persistence
-            sessionStorage.setItem('admin_access_granted', 'true');
-            localStorage.setItem('admin_access_granted', 'true');
             // Remove the secret from URL without refreshing
             const newUrl = window.location.pathname;
             window.history.replaceState({}, '', newUrl);
@@ -38,9 +35,8 @@ export function AdminAccessCheck({ children }: { children: React.ReactNode }) {
             router.replace('/');
           }
         } else {
-          // Check for existing access
-          const hasAccess = sessionStorage.getItem('admin_access_granted') === 'true' || 
-                           localStorage.getItem('admin_access_granted') === 'true';
+          // Check for existing access cookie
+          const hasAccess = document.cookie.includes('admin_access=true');
           
           if (hasAccess) {
             setIsAuthorized(true);
