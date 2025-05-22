@@ -7,14 +7,8 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Allow the verify endpoint and admin layout to be accessed
-  if (request.nextUrl.pathname === '/api/admin/verify' || 
-      request.nextUrl.pathname === '/admin') {
-    return NextResponse.next();
-  }
-
-  // No valid access, redirect to home
-  return NextResponse.redirect(new URL('/', request.url));
+  // Allow all admin routes - authorization is handled by AdminAccessCheck
+  return NextResponse.next();
 }
 
 export const config = {
