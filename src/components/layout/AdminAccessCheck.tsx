@@ -6,11 +6,10 @@ import { useRouter, useSearchParams } from 'next/navigation';
 export function AdminAccessCheck({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [isVerifying, setIsVerifying] = useState(true);
+  const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
 
   useEffect(() => {
     const verifyAccess = async () => {
-      setIsVerifying(true);
       try {
         // Check URL for admin secret
         const secret = searchParams.get('admin');
@@ -33,7 +32,9 @@ export function AdminAccessCheck({ children }: { children: React.ReactNode }) {
             // Remove the secret from URL without refreshing
             const newUrl = window.location.pathname;
             window.history.replaceState({}, '', newUrl);
+            setIsAuthorized(true);
           } else {
+            setIsAuthorized(false);
             router.replace('/');
           }
         } else {
@@ -41,28 +42,40 @@ export function AdminAccessCheck({ children }: { children: React.ReactNode }) {
           const hasAccess = sessionStorage.getItem('admin_access_granted') === 'true' || 
                            localStorage.getItem('admin_access_granted') === 'true';
           
-          if (!hasAccess) {
+          if (hasAccess) {
+            setIsAuthorized(true);
+          } else {
+            setIsAuthorized(false);
             router.replace('/');
           }
         }
       } catch (error) {
         console.error('Error verifying admin access:', error);
+        setIsAuthorized(false);
         router.replace('/');
-      } finally {
-        setIsVerifying(false);
       }
     };
 
     verifyAccess();
   }, [router, searchParams]);
 
-  if (isVerifying) {
+  // Show nothing while checking authorization
+  if (isAuthorized === null) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
-        <p>Verifying access...</p>
+        <div className="flex flex-col items-center gap-4">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+          <p className="text-muted-foreground">Verifying access...</p>
+        </div>
       </div>
     );
   }
 
+  // Show nothing if not authorized (will be redirected)
+  if (!isAuthorized) {
+    return null;
+  }
+
+  // Show content only if authorized
   return <>{children}</>;
 } 
