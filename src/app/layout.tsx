@@ -47,8 +47,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {/* Add a dynamic title tag here if needed, or keep it static */}
-        {/* <title>Premium Auto - Your Trusted Car Marketplace</title> */}
+        <title>Premium Auto - Your Trusted Car Marketplace</title>
         <meta name="description" content="Find your next car with Premium Auto. Quality listings and great prices." />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}>
